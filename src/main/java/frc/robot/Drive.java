@@ -66,7 +66,9 @@ public class Drive implements IDrive {
 
     @Override
     public void rotateDegrees(double relativeAngle, double angularSpeed, Runnable completionRoutine) {
-        
+        setCompletionRoutine(null);
+        driveMode = DriveMode.DRIVERCONTROL;
+        driveBase.driveCartesian(0, 0, angularSpeed);
     }
 
     @Override
