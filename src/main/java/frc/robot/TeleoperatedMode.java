@@ -7,6 +7,7 @@ public class TeleoperatedMode implements IRobotMode {
 
     private XboxController xboxController;
     private IDrive drive;
+    private IRoller roller;
 
     private static final double LEFT_STICK_EXPONENT = 3.0;
     private static final double ROTATION_SPEED_THRESHOLD = 0.3;
@@ -47,6 +48,11 @@ public class TeleoperatedMode implements IRobotMode {
         if (rotationSpeed > ROTATION_SPEED_THRESHOLD) {
             rotationSpeed = Math.pow(rotationSpeed, RIGHT_STICK_EXPONENT);
             drive.lookAt(angle, rotationSpeed);
+        }
+        if (xboxController.getBumper(hand.kRight)){
+            roller.start();
+        } else {
+            roller.stop();
         }
     }
 }
