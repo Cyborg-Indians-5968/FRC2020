@@ -11,7 +11,6 @@ public class TeleoperatedMode implements IRobotMode {
 
     private static final double LEFT_STICK_EXPONENT = 3.0;
     private static final double ROTATION_SPEED_THRESHOLD = 0.3;
-    private static final double RIGHT_STICK_EXPONENT = 1.0;
 
     public TeleoperatedMode(IDrive drive) {
 
@@ -37,19 +36,19 @@ public class TeleoperatedMode implements IRobotMode {
 
         drive.driveManual(leftX, leftY);
 
+        // Process Rotation control
         double rightX = xboxController.getX(Hand.kRight);
         double rightY = -xboxController.getY(Hand.kRight);
 
         double rotationSpeed = Math.sqrt(Math.pow(rightX, 2.0) + Math.pow(rightY, 2.0));
 
-        double angle = Math.atan2(rightY, rightX);
-        drive.rotateDegrees(angle, rotationSpeed);
+        double angle = rightX >= 0 ? Math.atan2(rightY, rightX) : -Math.atan2(rightY, rightX);
 
         if (rotationSpeed > ROTATION_SPEED_THRESHOLD) {
-            rotationSpeed = Math.pow(rotationSpeed, RIGHT_STICK_EXPONENT);
             drive.lookAt(angle, rotationSpeed);
         }
-        if (xboxController.getBumper(hand.kRight)){
+        
+        if (xboxController.getBumper(Hand.kRight)){
             roller.start();
         } else {
             roller.stop();
