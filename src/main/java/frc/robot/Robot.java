@@ -11,10 +11,15 @@ public class Robot extends RobotBase {
     private IRobotMode autonomousMode;
     private IRobotMode teleoperatedMode;
 
+    private IDrive drive;
+    private IGyroscopeSensor gyroscope;
+
     public Robot() {
+        gyroscope = new NavXMXP();
+        drive = new Drive(gyroscope);
         disabledMode = new DisabledMode();
         autonomousMode = disabledMode;
-        teleoperatedMode = disabledMode;
+        teleoperatedMode = new TeleoperatedMode(drive);
     }
 
     @Override
@@ -41,10 +46,12 @@ public class Robot extends RobotBase {
     }
 
     private void doPeripheralReinitialization() {
-
+        drive.init();
     }
 
     private void doPeripheralPeriodicProcessing() {
+        drive.periodic();
+        
         Debug.periodic();
     }
 
