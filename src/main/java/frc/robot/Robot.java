@@ -15,6 +15,7 @@ public class Robot extends RobotBase {
     private IGyroscopeSensor gyroscope;
 
     public Robot() {
+        gyroscope = new NavXMXP();
         drive = new Drive(gyroscope);
         disabledMode = new DisabledMode();
         autonomousMode = disabledMode;

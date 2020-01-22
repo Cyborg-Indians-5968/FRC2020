@@ -43,9 +43,9 @@ public class Drive implements IDrive {
         rearLeftMotor.setNeutralMode(NeutralMode.Brake);
         rearRightMotor.setNeutralMode(NeutralMode.Brake);
 
-        frontLeftMotor.setInverted(true);
+        frontLeftMotor.setInverted(false);
         frontRightMotor.setInverted(false);
-        rearLeftMotor.setInverted(true);
+        rearLeftMotor.setInverted(false);
         rearRightMotor.setInverted(false);
 
         driveBase = new MecanumDrive(frontLeftMotor, rearLeftMotor, frontRightMotor, rearRightMotor);
@@ -91,6 +91,11 @@ public class Drive implements IDrive {
     }
 
     @Override
+    public void lookAt(double angle) {
+        this.desiredAngle = angle;
+    }
+
+    @Override
     public void lookAt(double angle, double angularSpeed) {
         this.angularSpeed = angularSpeed;
         this.desiredAngle = angle;
@@ -120,7 +125,12 @@ public class Drive implements IDrive {
     }
 
     private void manualControlPeriodic() {
-        driveBase.driveCartesian(yDirectionSpeed, xDirectionSpeed, gyroscope.getYaw() != desiredAngle ? angularSpeed : 0);
+        double deltaAngle = desiredAngle - gyroscope.getYaw();
+        double actualSpeed = angularSpeed * (Math.abs(deltaAngle) / (2 * Math.PI)); 
+        if((deltaAngle + (Math.PI * 3)) % (Math.PI * 2) - Math.PI > 0 ) {
+            actualSpeed *= -1;
+        }
+        driveBase.driveCartesian(yDirectionSpeed, xDirectionSpeed, gyroscope.getYaw() != desiredAngle ? actualSpeed : 0);
     }
 
     @Override

@@ -24,6 +24,8 @@ public interface IDrive {
     public void driveManual(double xDirectionSpeed, double yDirectionSpeed);
 
     // This turns the robot to an absolute field angle
+    public void lookAt(double angle);
+
     public void lookAt(double angle, double angularSpeed);
 
     public void stop();
