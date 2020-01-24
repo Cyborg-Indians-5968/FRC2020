@@ -3,8 +3,7 @@ package frc.robot;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
-public class Launcher implements ILauncher
-{
+public class Launcher implements IMotorPeripheral {
     private TalonSRX launcherMotor;
 
     private double motorSpeed;
@@ -13,7 +12,7 @@ public class Launcher implements ILauncher
 
     public Launcher() {
         launcherMotor = new TalonSRX(PortMap.CAN.LAUNCHER_MOTOR_CONTROLLER);
-        //launcherMotor.setInverted(true);
+        // launcherMotor.setInverted(true);
 
         stop();
     }
@@ -26,7 +25,7 @@ public class Launcher implements ILauncher
     @Override
     public void start() {
         motorSpeed = HIGH;
-        
+
     }
 
     @Override
@@ -36,6 +35,6 @@ public class Launcher implements ILauncher
 
     @Override
     public void periodic() {
-        launcherMotor.set(ControlMode.PercentOutput,motorSpeed);
+        launcherMotor.set(ControlMode.PercentOutput, motorSpeed);
     }
 }
