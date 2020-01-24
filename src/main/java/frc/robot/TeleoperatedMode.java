@@ -1,13 +1,14 @@
 package frc.robot;
 
-import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.GenericHID.Hand;
+import edu.wpi.first.wpilibj.XboxController;
 
 public class TeleoperatedMode implements IRobotMode {
 
     private XboxController xboxController;
     private IDrive drive;
     private IRoller roller;
+    private ILauncher launcher;
 
     private static final double LEFT_STICK_EXPONENT = 3.0;
     private static final double RIGHT_STICK_EXPONENT = 3.0;
@@ -18,6 +19,8 @@ public class TeleoperatedMode implements IRobotMode {
         xboxController = new XboxController(PortMap.USB.XBOXCONTROLLER);
 
         this.drive = drive;
+        // this.launcher = launcher;
+
     }
 
     @Override
@@ -54,12 +57,18 @@ public class TeleoperatedMode implements IRobotMode {
         }
         
         
-        /*
-        if (xboxController.getBumper(Hand.kRight)){
-            roller.start();
-        } else {
-            roller.stop();
-        }
-        */
+        
+        // if (xboxController.getBumper(Hand.kRight)){
+        //     roller.start();
+        // } else {
+        //     roller.stop();
+        // }
+
+        // if (xboxController.getBumper(Hand.kRight)) {
+        //     launcher.start();
+        // } else {
+        //     launcher.stop();
+        // }
+        
     }
 }
