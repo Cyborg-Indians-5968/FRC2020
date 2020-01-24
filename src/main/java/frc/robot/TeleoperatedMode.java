@@ -35,7 +35,7 @@ public class TeleoperatedMode implements IRobotMode {
         leftX = Math.pow(leftX, LEFT_STICK_EXPONENT);
         leftY = Math.pow(leftY, LEFT_STICK_EXPONENT);
 
-        drive.driveManual(leftY, leftX);
+        drive.driveManual(leftX, leftY);
 
         // Process Rotation control
         double rightX = xboxController.getX(Hand.kRight);
@@ -44,7 +44,7 @@ public class TeleoperatedMode implements IRobotMode {
         rightX = Math.pow(rightX, RIGHT_STICK_EXPONENT);
         rightY = Math.pow(rightY, RIGHT_STICK_EXPONENT);
 
-        double angle = rightX >= 0 ? Math.atan2(rightY, rightX) : -Math.atan2(rightY, rightX);
+        double angle = rightY >= 0 ? -Math.atan2(rightX, rightY) + (Math.PI / 2) : -Math.atan2(rightX, rightY) - (Math.PI / 2);
         double rotationSpeed = Math.sqrt(Math.pow(rightX, 2) + Math.pow(rightY, 2));
 
         if(rotationSpeed > ROTATION_SPEED_THRESHOLD) {
