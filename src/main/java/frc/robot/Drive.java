@@ -80,8 +80,12 @@ public class Drive implements IDrive {
     @Override
     public void driveManual(double xDirectionSpeed, double yDirectionSpeed) {
         driveMode = DriveMode.DRIVERCONTROL;
-        this.xDirectionSpeed = xDirectionSpeed;
-        this.yDirectionSpeed = yDirectionSpeed;
+
+        double absoluteY = yDirectionSpeed * Math.cos(gyroscope.getYaw()) + xDirectionSpeed * Math.sin(gyroscope.getYaw());
+        double absoluteX = -yDirectionSpeed * Math.sin(gyroscope.getYaw()) + xDirectionSpeed * Math.cos(gyroscope.getYaw()); 
+
+        this.xDirectionSpeed = absoluteX;
+        this.yDirectionSpeed = absoluteY;
         setCompletionRoutine(null);
     }
 
@@ -125,12 +129,10 @@ public class Drive implements IDrive {
     }
 
     private void manualControlPeriodic() {
-        double deltaAngle = desiredAngle - gyroscope.getYaw();
-        double actualSpeed = angularSpeed * (Math.abs(deltaAngle) / (2 * Math.PI)); 
-        if((deltaAngle + (Math.PI * 3)) % (Math.PI * 2) - Math.PI > 0 ) {
-            actualSpeed *= -1;
-        }
-        driveBase.driveCartesian(yDirectionSpeed, xDirectionSpeed, gyroscope.getYaw() != desiredAngle ? actualSpeed : 0);
+        double deltaAngle = (desiredAngle - gyroscope.getYaw() + (Math.PI * 3)) % (Math.PI * 2) - Math.PI;
+        double actualSpeed = angularSpeed * (-deltaAngle / Math.PI);
+        
+        driveBase.driveCartesian(xDirectionSpeed, yDirectionSpeed, gyroscope.getYaw() != desiredAngle ? actualSpeed : 0);
     }
 
     @Override
