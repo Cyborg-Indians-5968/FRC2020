@@ -9,6 +9,7 @@ public class TeleoperatedMode implements IRobotMode {
     private IDrive drive;
     private IRoller roller;
     private ILauncher launcher;
+    private Storage storage;
 
     private static final double LEFT_STICK_EXPONENT = 3.0;
     private static final double RIGHT_STICK_EXPONENT = 3.0;
@@ -20,7 +21,7 @@ public class TeleoperatedMode implements IRobotMode {
 
         this.drive = drive;
         // this.launcher = launcher;
-
+        // this.storage = storage;
     }
 
     @Override
@@ -38,7 +39,7 @@ public class TeleoperatedMode implements IRobotMode {
         leftX = Math.pow(leftX, LEFT_STICK_EXPONENT);
         leftY = Math.pow(leftY, LEFT_STICK_EXPONENT);
 
-        drive.driveManual(leftX, leftY);
+        drive.driveManual(leftY, leftX);
 
         // Process Rotation control
         double rightX = xboxController.getX(Hand.kRight);
@@ -47,28 +48,27 @@ public class TeleoperatedMode implements IRobotMode {
         rightX = Math.pow(rightX, RIGHT_STICK_EXPONENT);
         rightY = Math.pow(rightY, RIGHT_STICK_EXPONENT);
 
-        double angle = rightY >= 0 ? -Math.atan2(rightX, rightY) + (Math.PI / 2) : -Math.atan2(rightX, rightY) - (Math.PI / 2);
+        double angle = rightX >= 0 ? Math.atan2(rightY, rightX) : -Math.atan2(rightY, rightX);
         double rotationSpeed = Math.sqrt(Math.pow(rightX, 2) + Math.pow(rightY, 2));
 
-        if(rotationSpeed > ROTATION_SPEED_THRESHOLD) {
+        if (rotationSpeed > ROTATION_SPEED_THRESHOLD) {
             drive.lookAt(angle, rotationSpeed);
         } else {
             drive.lookAt(angle, 0);
         }
-        
-        
-        
+
         // if (xboxController.getBumper(Hand.kRight)){
-        //     roller.start();
+        // roller.start();
         // } else {
-        //     roller.stop();
+        // roller.stop();
         // }
 
         // if (xboxController.getBumper(Hand.kRight)) {
-        //     launcher.start();
+        // storage.advance();
+        // launcher.start();
         // } else {
-        //     launcher.stop();
+        // launcher.stop();
         // }
-        
+
     }
 }
