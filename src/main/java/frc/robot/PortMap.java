@@ -13,6 +13,10 @@ public class PortMap {
         public static final int REAR_LEFT_MOTOR = 4;
         public static final int REAR_RIGHT_MOTOR = 5;
         public static final int ROLLER_MOTOR_CONTROLLER = 15;
+        public static final int WHEEL_MOTOR_CONTROLLER = 15;
+        public static final int LAUNCHER_MOTOR_CONTROLLER = 15;
+        public static final int STORAGE_MOTOR_CONTROLLER = 15;
+
         public static final int PCM = 0;
     }
     

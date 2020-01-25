@@ -17,17 +17,17 @@ public class ColorWheel implements IColorWheel {
     private static final double LOW = 0.0;
     private static final int REVOLUTIONS = 4;
 
-    private char[] sequence = { 'R', 'G', 'B', 'Y' };
+    private Character[] sequence = { 'R', 'G', 'B', 'Y' };
     private char sensorColor;
     private char desiredColor;
     private char lastColor;
     private int currentRevolutions = 0;
 
     public ColorWheel() {
-        wheelMotor = new TalonSRX(PortMap.CAN.LAUNCHER_MOTOR_CONTROLLER);
+        wheelMotor = new TalonSRX(PortMap.CAN.WHEEL_MOTOR_CONTROLLER);
         // wheelMotor.setInverted(true);
-        colorSensor = new ColorSensorV3(0);
-        stop();
+        colorSensor = new ColorSensorV3(0); // TODO: Set actual I2C port
+        motorSpeed = LOW;
     }
 
     @Override
@@ -42,17 +42,20 @@ public class ColorWheel implements IColorWheel {
     }
 
     private char getColor(){
-        switch (colorSensor.getColor()){
-            default:
-                return 'X';
-            case Color.kRed:
-                return 'R';
-            case Color.kLime:
-                return 'G';
-            case Color.kCyan;
-                return 'B';
-            case Color.kYellow;
-                return 'Y';
+        if (colorSensor.getColor().equals(Color.kRed)){ 
+            return 'R'; 
+        }
+        else if (colorSensor.getColor().equals(Color.kLime)){ 
+            return 'G';
+        }
+        else if (colorSensor.getColor().equals(Color.kCyan)){ 
+            return 'B';
+        }
+        else if (colorSensor.getColor().equals(Color.kYellow)){
+            return 'Y';
+        }
+        else {
+            return 'X';
         }
 
     };
