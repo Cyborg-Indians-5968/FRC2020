@@ -7,9 +7,9 @@ public class TeleoperatedMode implements IRobotMode {
 
     private XboxController xboxController;
     private IDrive drive;
-    private IRoller roller;
-    private ILauncher launcher;
-    private Storage storage;
+    private IMotorPeripheral roller;
+    private IMotorPeripheral launcher;
+    private IMotorPeripheral storage;
 
     private static final double LEFT_STICK_EXPONENT = 3.0;
     private static final double RIGHT_STICK_EXPONENT = 3.0;
