@@ -17,7 +17,7 @@ public class ColorWheel implements IColorWheel {
     private static final double LOW = 0.0;
     private static final int REVOLUTIONS = 4;
 
-    private Character[] sequence = { 'R', 'G', 'B', 'Y' };
+    private char[] sequence = { 'R', 'G', 'B', 'Y' };
     private char sensorColor;
     private char desiredColor;
     private char lastColor;
@@ -26,7 +26,7 @@ public class ColorWheel implements IColorWheel {
     public ColorWheel() {
         wheelMotor = new TalonSRX(PortMap.CAN.WHEEL_MOTOR_CONTROLLER);
         // wheelMotor.setInverted(true);
-        colorSensor = new ColorSensorV3(0); // TODO: Set actual I2C port
+        colorSensor = new ColorSensorV3(Port.kOnboard);
         motorSpeed = LOW;
     }
 
@@ -42,16 +42,17 @@ public class ColorWheel implements IColorWheel {
     }
 
     private char getColor(){
-        if (colorSensor.getColor().equals(Color.kRed)){ 
+        Color color = colorSensor.getColor();
+        if (color.equals(Color.kRed)){ 
             return 'R'; 
         }
-        else if (colorSensor.getColor().equals(Color.kLime)){ 
+        else if (color.equals(Color.kLime)){ 
             return 'G';
         }
-        else if (colorSensor.getColor().equals(Color.kCyan)){ 
+        else if (color.equals(Color.kCyan)){ 
             return 'B';
         }
-        else if (colorSensor.getColor().equals(Color.kYellow)){
+        else if (color.equals(Color.kYellow)){
             return 'Y';
         }
         else {
@@ -68,7 +69,7 @@ public class ColorWheel implements IColorWheel {
             currentRevolutions++;
         }
 
-        if (sensorColor == sequence[(Arrays.asList(sequence).indexOf(desiredColor) + 2) % 4]) {
+        if (sensorColor == sequence[(new String(sequence).indexOf(desiredColor) + 2) % 4]) {
             motorSpeed = HIGH;
         } else if (currentRevolutions != REVOLUTIONS) {
             motorSpeed = HIGH;
