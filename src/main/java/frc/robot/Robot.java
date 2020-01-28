@@ -12,14 +12,21 @@ public class Robot extends RobotBase {
     private IRobotMode teleoperatedMode;
 
     private IDrive drive;
+    private IMotorPeripheral roller;
+    private IMotorPeripheral launcher;
+    private Storage storage;
     private IGyroscopeSensor gyroscope;
 
     public Robot() {
         gyroscope = new NavXMXP();
+        roller = new Roller();
+        launcher = new Launcher();
+        storage = new Storage();
+
         drive = new Drive(gyroscope);
         disabledMode = new DisabledMode();
         autonomousMode = disabledMode;
-        teleoperatedMode = new TeleoperatedMode(drive);
+        teleoperatedMode = new TeleoperatedMode(drive, roller, launcher, storage);
     }
 
     @Override
@@ -47,11 +54,19 @@ public class Robot extends RobotBase {
 
     private void doPeripheralReinitialization() {
         drive.init();
+
+        roller.init();
+        launcher.init();
+        storage.init();
     }
 
     private void doPeripheralPeriodicProcessing() {
         drive.periodic();
         
+        roller.periodic();
+        launcher.periodic();
+        storage.periodic();
+
         Debug.periodic();
     }
 

@@ -27,13 +27,16 @@ public class Storage implements IMotorPeripheral{
         stop();
     }
 
+    @Override
     public void start(){
         motorSpeed = HIGH;
     }
 
+    @Override
     public void stop(){
         motorSpeed = LOW;
     }
+
     public void advance(){
         isAdvancing = true;
         start();
@@ -41,11 +44,14 @@ public class Storage implements IMotorPeripheral{
         stop();
         isAdvancing = false;
     }
+
+    @Override
     public void init(){
         stop();
         isAdvancing = false;
     }
 
+    @Override
     public void periodic(){
         if(!storageSwitch.get()&&!isAdvancing){
             advance();
