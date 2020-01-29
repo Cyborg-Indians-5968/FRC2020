@@ -1,6 +1,5 @@
 package frc.robot;
 
-import java.util.Arrays;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.revrobotics.ColorSensorV3;
@@ -33,7 +32,6 @@ public class ColorWheel implements IColorWheel {
     @Override
     public void spinToColor(char color) {
         desiredColor = color;
-
     }
 
     @Override
@@ -41,21 +39,17 @@ public class ColorWheel implements IColorWheel {
         desiredColor = getColor();
     }
 
-    private char getColor(){
+    private char getColor() {
         Color color = colorSensor.getColor();
-        if (color.equals(Color.kRed)){ 
-            return 'R'; 
-        }
-        else if (color.equals(Color.kLime)){ 
+        if (color.equals(Color.kRed)) {
+            return 'R';
+        } else if (color.equals(Color.kLime)) {
             return 'G';
-        }
-        else if (color.equals(Color.kCyan)){ 
+        } else if (color.equals(Color.kCyan)) {
             return 'B';
-        }
-        else if (color.equals(Color.kYellow)){
+        } else if (color.equals(Color.kYellow)) {
             return 'Y';
-        }
-        else {
+        } else {
             return 'X';
         }
 

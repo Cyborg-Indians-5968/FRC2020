@@ -5,7 +5,6 @@ import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
 public class Launcher implements IMotorPeripheral {
 
-    
     private TalonSRX launcherMotor;
 
     private double motorSpeed;
@@ -19,24 +18,28 @@ public class Launcher implements IMotorPeripheral {
         stop();
     }
 
+    // sets the motor speed to low
     @Override
     public void stop() {
         motorSpeed = LOW;
     }
 
+    // sets the motor speed to high
     @Override
     public void start() {
         motorSpeed = HIGH;
-
     }
 
+    // stops the launcher
     @Override
     public void init() {
         stop();
     }
 
+    // sets the laucher motor to motor spped
     @Override
     public void periodic() {
         launcherMotor.set(ControlMode.PercentOutput, motorSpeed);
     }
+
 }
