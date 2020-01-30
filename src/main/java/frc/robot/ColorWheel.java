@@ -21,24 +21,25 @@ public class ColorWheel implements IColorWheel {
     private char desiredColor;
     private char lastColor;
     private int currentRevolutions = 0;
-
+    
+    // initializes a new color sensor object and sets the motor spped to low
     public ColorWheel() {
         wheelMotor = new TalonSRX(PortMap.CAN.WHEEL_MOTOR_CONTROLLER);
         // wheelMotor.setInverted(true);
         colorSensor = new ColorSensorV3(Port.kOnboard);
         motorSpeed = LOW;
     }
-
+    // assigns desiredColor to a color 
     @Override
     public void spinToColor(char color) {
         desiredColor = color;
     }
-
+    // assigns a color to desiredColor by calling the getColor function
     @Override
     public void spinRevolutions() {
         desiredColor = getColor();
     }
-
+    // getColor functions gets the color from the color sensor and returns a certain letter depending on the type of color
     private char getColor() {
         Color color = colorSensor.getColor();
         if (color.equals(Color.kRed)) {
@@ -58,21 +59,22 @@ public class ColorWheel implements IColorWheel {
     @Override
     public void periodic() {
         sensorColor = getColor();
-
+        // keeps track of revolutions
         if (sensorColor == desiredColor && lastColor != sensorColor) {
             currentRevolutions++;
         }
-
-        if (sensorColor == sequence[(new String(sequence).indexOf(desiredColor) + 2) % 4]) {
+        // checks if it's on the correct color
+        if (sensorColor != sequence[(new String(sequence).indexOf(desiredColor) + 2) % 4]) {
             motorSpeed = HIGH;
+        // checks to make sure if it has completed the corrected amounts of revolutions
         } else if (currentRevolutions != REVOLUTIONS) {
             motorSpeed = HIGH;
         } else {
             motorSpeed = LOW;
         }
-
+        // sets the wheel motor to motor speed
         wheelMotor.set(ControlMode.PercentOutput, motorSpeed);
-
+        // assigns last color to sensor color so that we dont't run to the color again
         lastColor = sensorColor;
     }
 
