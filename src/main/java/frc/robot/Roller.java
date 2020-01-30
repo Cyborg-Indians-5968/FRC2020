@@ -17,22 +17,26 @@ public class Roller implements IMotorPeripheral {
         stop();
     }
 
+    // sets the roller spped to low
     @Override
     public void stop() {
         motorSpeed = LOW;
     }
 
+    // sets the roller speed to high
     @Override
     public void start() {
         motorSpeed = HIGH;
 
     }
 
+    // stops the roller
     @Override
     public void init() {
         stop();
     }
 
+    // sets the roller speed to motor speed
     @Override
     public void periodic() {
         rollerMotor.set(ControlMode.PercentOutput, motorSpeed);

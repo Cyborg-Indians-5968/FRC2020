@@ -12,7 +12,7 @@ public class TeleoperatedMode implements IRobotMode {
     private IMotorPeripheral launcher;
     private Storage storage;
     private IColorWheel wheel;
-    
+
     private String data;
 
     private static final double LEFT_STICK_EXPONENT = 3.0;
@@ -27,6 +27,7 @@ public class TeleoperatedMode implements IRobotMode {
         this.launcher = launcher;
         this.storage = storage;
         this.roller = roller;
+
     }
 
     @Override
@@ -62,7 +63,7 @@ public class TeleoperatedMode implements IRobotMode {
             drive.lookAt(angle, 0);
         }
 
-        if (xboxController.getBumper(Hand.kLeft)){
+        if (xboxController.getBumper(Hand.kLeft)) {
             roller.start();
         } else {
             roller.stop();
@@ -71,13 +72,13 @@ public class TeleoperatedMode implements IRobotMode {
         if (xboxController.getBumper(Hand.kRight)) {
             storage.advance();
             launcher.start();
-         } else {
+        } else {
             launcher.stop();
         }
 
         data = DriverStation.getInstance().getGameSpecificMessage();
         if (xboxController.getAButton()) {
-            if (data.length() > 0){
+            if (data.length() > 0) {
                 wheel.spinToColor(data.charAt(0));
             } else {
                 wheel.spinRevolutions();
@@ -85,4 +86,4 @@ public class TeleoperatedMode implements IRobotMode {
         }
 
     }
-}   
+}
