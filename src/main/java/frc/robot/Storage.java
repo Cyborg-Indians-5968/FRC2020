@@ -53,7 +53,7 @@ public class Storage implements IMotorPeripheral{
 
     @Override
     public void periodic(){
-        if(!storageSwitch.get()&&!isAdvancing){
+        if(!storageSwitch.get() && !isAdvancing){
             advance();
         }
 
