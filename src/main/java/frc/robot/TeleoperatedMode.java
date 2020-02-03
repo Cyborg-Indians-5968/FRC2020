@@ -68,11 +68,19 @@ public class TeleoperatedMode implements IRobotMode {
             roller.stop();
         }
 
-        if (xboxController.getBumper(Hand.kRight)) {
-            storage.advance();
+        if (xboxController.getBumper(Hand.kRight) && storage.storageMode == StorageMode.FIRING) {
             launcher.start();
+            storage.advance();
          } else {
             launcher.stop();
+        }
+
+        if (xboxController.getAButton()) {
+            storage.unprime();
+        }
+
+        if (xboxController.getBButton()) {
+            storage.prime();
         }
 
         data = DriverStation.getInstance().getGameSpecificMessage();
