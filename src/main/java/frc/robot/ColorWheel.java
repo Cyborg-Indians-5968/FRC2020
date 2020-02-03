@@ -68,7 +68,7 @@ public class ColorWheel implements IColorWheel {
             currentRevolutions++;
         }
 
-        if (sensorColor == sequence[(new String(sequence).indexOf(desiredColor) + 2) % 4]) {
+        if (sensorColor == sequence[(new String(sequence).indexOf(desiredColor) + 2) % sequence.length]) {
             motorSpeed = HIGH;
         } else if (currentRevolutions != REVOLUTIONS) {
             motorSpeed = HIGH;
