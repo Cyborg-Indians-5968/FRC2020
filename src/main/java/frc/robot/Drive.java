@@ -73,13 +73,12 @@ public class Drive implements IDrive {
 
     @Override
     public void driveDistance(double distanceInches, double xDirectionSpeed, double yDirectionSpeed) {
-        driveMode = DriveMode.AUTODRIVING;
         driveDistance(distanceInches, xDirectionSpeed, yDirectionSpeed, null);
     }
 
     @Override
     public void rotateDegrees(double angle, double angularSpeed) {
-
+        rotateDegrees(angle, angularSpeed, null);
     }
 
     @Override
@@ -96,8 +95,12 @@ public class Drive implements IDrive {
     }
 
     @Override
-    public void rotateDegrees(double relativeAngle, double angularSpeed, Runnable completionRoutine) {
+    public void rotateDegrees(double angle, double angularSpeed, Runnable completionRoutine) {
+        driveMode = DriveMode.AUTODRIVING;
+        
         setCompletionRoutine(completionRoutine);
+        this.desiredAngle = gyroscope.getYaw() + angle;
+        this.angularSpeed = angularSpeed; 
     }
 
     @Override
@@ -172,7 +175,10 @@ public class Drive implements IDrive {
         if (driveMode == DriveMode.DRIVERCONTROL) {
             manualControlPeriodic();
         } else if (driveMode == DriveMode.AUTODRIVING) {
-            driveBase.driveCartesian(yDirectionSpeed, xDirectionSpeed, angularSpeed);
+            double deltaAngle = (desiredAngle + (Math.PI * 3)) % (Math.PI * 2) - Math.PI;
+            double actualSpeed = angularSpeed * (-deltaAngle / Math.PI);
+            
+            driveBase.driveCartesian(yDirectionSpeed, xDirectionSpeed, gyroscope.getYaw() != desiredAngle ? actualSpeed : 0);
 
             // Check if we've completed our travel
             double averageDistanceTraveled = Math.abs((leftEncoder.getDistance() + rightEncoder.getDistance()) / 2);
