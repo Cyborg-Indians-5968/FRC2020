@@ -25,7 +25,7 @@ public class Robot extends RobotBase {
 
         drive = new Drive(gyroscope);
         disabledMode = new DisabledMode();
-        autonomousMode = disabledMode;
+        autonomousMode = new LineAuto(drive);
         teleoperatedMode = new TeleoperatedMode(drive, roller, launcher, storage);
     }
 
