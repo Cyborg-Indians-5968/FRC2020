@@ -1,6 +1,5 @@
 package frc.robot;
 
-import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -13,6 +12,8 @@ public class Drive implements IDrive {
     private DriveMode driveMode;
     private IGyroscopeSensor gyroscope;
     private Runnable currentCompletionRoutine;
+    private IEncoder leftEncoder;
+    private IEncoder rightEncoder;
     
     private WPI_TalonSRX frontLeftMotor;
     private WPI_TalonSRX frontRightMotor;
@@ -23,6 +24,10 @@ public class Drive implements IDrive {
     private double yDirectionSpeed;
     private double angularSpeed;
     private double desiredAngle;
+    private double desiredDistance;
+
+    private static final double WHEEL_DIAMETER = 8.0; // inches
+    private static final double ENCODER_RESOLUTION = 2048.0;
 
     public Drive(IGyroscopeSensor gyroscope) {
         
@@ -49,6 +54,16 @@ public class Drive implements IDrive {
         rearRightMotor.setInverted(false);
 
         driveBase = new MecanumDrive(frontLeftMotor, rearLeftMotor, frontRightMotor, rearRightMotor);
+
+        leftEncoder = new TalonEncoder(frontLeftMotor);
+        rightEncoder = new TalonEncoder(frontRightMotor);
+
+        double distancePerPulse = (WHEEL_DIAMETER * Math.PI) / ENCODER_RESOLUTION;
+
+        leftEncoder.setDistancePerPulse(distancePerPulse);
+        rightEncoder.setDistancePerPulse(distancePerPulse);
+
+        leftEncoder.setInverted(true);
     }
 
     @Override
@@ -58,23 +73,34 @@ public class Drive implements IDrive {
 
     @Override
     public void driveDistance(double distanceInches, double xDirectionSpeed, double yDirectionSpeed) {
-        driveMode = DriveMode.AUTODRIVINGTRAIGHT;
+        driveDistance(distanceInches, xDirectionSpeed, yDirectionSpeed, null);
     }
 
     @Override
     public void rotateDegrees(double angle, double angularSpeed) {
-
+        rotateDegrees(angle, angularSpeed, null);
     }
 
     @Override
     public void driveDistance(double distanceInches, double xDirectionSpeed, double yDirectionSpeed, Runnable completionRoutine) {
-        driveMode = DriveMode.AUTODRIVINGTRAIGHT;
+        driveMode = DriveMode.AUTODRIVING;
+        
         setCompletionRoutine(completionRoutine);
+        this.xDirectionSpeed = xDirectionSpeed;
+        this.yDirectionSpeed = yDirectionSpeed;
+        desiredDistance = distanceInches;
+
+        leftEncoder.reset();
+        rightEncoder.reset();
     }
 
     @Override
-    public void rotateDegrees(double relativeAngle, double angularSpeed, Runnable completionRoutine) {
+    public void rotateDegrees(double angle, double angularSpeed, Runnable completionRoutine) {
+        driveMode = DriveMode.AUTODRIVING;
+        
         setCompletionRoutine(completionRoutine);
+        this.desiredAngle = gyroscope.getYaw() + angle;
+        this.angularSpeed = angularSpeed; 
     }
 
     @Override
@@ -148,16 +174,17 @@ public class Drive implements IDrive {
     public void periodic() {
         if (driveMode == DriveMode.DRIVERCONTROL) {
             manualControlPeriodic();
-        } else if (driveMode == DriveMode.AUTODRIVINGTRAIGHT) {
-            driveBase.driveCartesian(yDirectionSpeed, xDirectionSpeed, angularSpeed);
+        } else if (driveMode == DriveMode.AUTODRIVING) {
+            double deltaAngle = (desiredAngle + (Math.PI * 3)) % (Math.PI * 2) - Math.PI;
+            double actualSpeed = angularSpeed * (-deltaAngle / Math.PI);
+            
+            driveBase.driveCartesian(yDirectionSpeed, xDirectionSpeed, gyroscope.getYaw() != desiredAngle ? actualSpeed : 0);
 
             // Check if we've completed our travel
-            /*
             double averageDistanceTraveled = Math.abs((leftEncoder.getDistance() + rightEncoder.getDistance()) / 2);
-            if (averageDistanceTraveled > distanceInches) {
+            if (averageDistanceTraveled > desiredDistance) {
                 handleActionEnd();
             } 
-            */
         } else {
             throw new IllegalArgumentException("The drive base controller is in an invalid drive mode.");
         }
