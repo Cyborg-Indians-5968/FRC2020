@@ -1,13 +1,13 @@
 package frc.robot;
 
-import com.ctre.phoenix.motorcontrol.ControlMode;
-import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Timer;
+import com.revrobotics.CANSparkMax;
+import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 public class Storage implements IMotorPeripheral {
 
-    private TalonSRX storageMotor;
+    private CANSparkMax storageMotor;
     private DigitalInput topSwitch;
     private DigitalInput bottomSwitch;
     private IEncoder encoder;
@@ -24,7 +24,7 @@ public class Storage implements IMotorPeripheral {
     private static final int MAXBALLS = 5;
 
     public Storage() {
-        storageMotor = new TalonSRX(PortMap.CAN.STORAGE_MOTOR_CONTROLLER);
+        storageMotor = new CANSparkMax(PortMap.CAN.STORAGE_MOTOR_CONTROLLER, MotorType.kBrushless);
         storageMotor.setInverted(true);
 
         bottomSwitch = new DigitalInput(0); // TODO: Set actual port
@@ -110,7 +110,7 @@ public class Storage implements IMotorPeripheral {
             storageMode = StorageMode.FIRING;
         }
 
-        storageMotor.set(ControlMode.PercentOutput, motorSpeed);
+        storageMotor.set(motorSpeed);
     }
 
 }
