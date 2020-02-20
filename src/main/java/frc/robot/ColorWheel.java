@@ -1,14 +1,14 @@
 package frc.robot;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
-import com.ctre.phoenix.motorcontrol.can.TalonSRX;
+import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 import com.revrobotics.ColorSensorV3;
 import edu.wpi.first.wpilibj.I2C.Port;
 import edu.wpi.first.wpilibj.util.Color;
 
 public class ColorWheel implements IColorWheel {
 
-    private TalonSRX wheelMotor;
+    private VictorSPX wheelMotor;
     private ColorSensorV3 colorSensor;
     private double motorSpeed;
 
@@ -23,7 +23,7 @@ public class ColorWheel implements IColorWheel {
     private int currentRevolutions = 0;
 
     public ColorWheel() {
-        wheelMotor = new TalonSRX(PortMap.CAN.WHEEL_MOTOR_CONTROLLER);
+        wheelMotor = new VictorSPX(PortMap.CAN.WHEEL_MOTOR_CONTROLLER);
         // wheelMotor.setInverted(true);
         colorSensor = new ColorSensorV3(Port.kOnboard);
         motorSpeed = LOW;
