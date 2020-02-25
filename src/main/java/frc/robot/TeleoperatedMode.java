@@ -12,6 +12,7 @@ public class TeleoperatedMode implements IRobotMode {
     private IMotorPeripheral launcher;
     private Storage storage;
     private IColorWheel wheel;
+    private Endgame endgame;
     
     private String data;
 
@@ -19,7 +20,7 @@ public class TeleoperatedMode implements IRobotMode {
     private static final double RIGHT_STICK_EXPONENT = 3.0;
     private static final double ROTATION_SPEED_THRESHOLD = 0.3;
 
-    public TeleoperatedMode(IDrive drive, IMotorPeripheral roller, IMotorPeripheral launcher, Storage storage, IColorWheel wheel) {
+    public TeleoperatedMode(IDrive drive, IMotorPeripheral roller, IMotorPeripheral launcher, Storage storage, IColorWheel wheel, Endgame endgame) {
 
         xboxController = new XboxController(PortMap.USB.XBOXCONTROLLER);
 
@@ -28,6 +29,7 @@ public class TeleoperatedMode implements IRobotMode {
         this.storage = storage;
         this.roller = roller;
         this.wheel = wheel;
+        this.endgame = endgame;
     }
 
     @Override
@@ -82,6 +84,18 @@ public class TeleoperatedMode implements IRobotMode {
 
         if (xboxController.getBButton()) {
             storage.prime();
+        }
+
+        if (xboxController.getYButton()) {
+            endgame.start();
+        } else {
+            endgame.stop();
+        }
+
+        if (xboxController.getXButton()) {
+            endgame.reverse();
+        } else {
+            endgame.stop();
         }
 
         data = DriverStation.getInstance().getGameSpecificMessage();

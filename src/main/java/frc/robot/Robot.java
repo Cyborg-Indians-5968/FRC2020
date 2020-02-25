@@ -17,17 +17,19 @@ public class Robot extends RobotBase {
     private Storage storage;
     private IColorWheel wheel;
     private IGyroscopeSensor gyroscope;
+    private Endgame endgame;
 
     public Robot() {
         gyroscope = new NavXMXP();
         roller = new Roller();
         launcher = new Launcher();
         storage = new Storage();
+        endgame = new Endgame();
 
         drive = new Drive(gyroscope);
         disabledMode = new DisabledMode();
         autonomousMode = new LineAuto(drive);
-        teleoperatedMode = new TeleoperatedMode(drive, roller, launcher, storage, wheel);
+        teleoperatedMode = new TeleoperatedMode(drive, roller, launcher, storage, wheel, endgame);
     }
 
     @Override
@@ -59,6 +61,7 @@ public class Robot extends RobotBase {
         roller.init();
         launcher.init();
         storage.init();
+        endgame.init();
     }
 
     private void doPeripheralPeriodicProcessing() {
@@ -68,7 +71,8 @@ public class Robot extends RobotBase {
         launcher.periodic();
         storage.periodic();
         wheel.periodic();
-
+        endgame.periodic();
+        
         Debug.periodic();
     }
 
