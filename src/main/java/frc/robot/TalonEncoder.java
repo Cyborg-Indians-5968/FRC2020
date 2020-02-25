@@ -23,13 +23,16 @@ public class TalonEncoder implements IEncoder {
 
         @Override
         public double getDistance() {
-            int rawEncoderValue =
-            talon.getSensorCollection().getQuadraturePosition();
+            // Convert the raw reading to distance and return it
+            return getPosition() * distancePerPulse;
+        }
+
+        public double getPosition() {
+            int rawEncoderValue = talon.getSensorCollection().getQuadraturePosition();
             if (isInverted) {
                 rawEncoderValue = -rawEncoderValue;
             }
-            // Convert the raw reading to distance and return it
-            return ((double)rawEncoderValue) * distancePerPulse;
+            return rawEncoderValue;
         }
 
         @Override

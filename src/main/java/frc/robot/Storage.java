@@ -1,16 +1,16 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.DigitalInput;
-import edu.wpi.first.wpilibj.Timer;
-import com.revrobotics.CANSparkMax;
-import com.revrobotics.CANSparkMaxLowLevel.MotorType;
+
+import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
 public class Storage implements IMotorPeripheral{
 
-    private CANSparkMax storageMotor;
+    private TalonSRX storageMotor;
+    private IEncoder encoder;
     private DigitalInput topSwitch;
     private DigitalInput bottomSwitch;
-    private IEncoder encoder;
     public StorageMode storageMode;
 
     private double motorSpeed;
@@ -20,15 +20,19 @@ public class Storage implements IMotorPeripheral{
     private static final double HIGH = 0.9;
     private static final double REVERSE = -0.9;
     private static final double LOW = 0.0;
-    private static final double DELAY = 2.0;
+    private static final double ROTATIONS_PER_BALL = 1.0;
     private static final int MAXBALLS = 5;
 
     public Storage(){
-        storageMotor = new CANSparkMax(PortMap.CAN.STORAGE_MOTOR_CONTROLLER, MotorType.kBrushless);
+        storageMotor = new TalonSRX(PortMap.CAN.STORAGE_MOTOR_CONTROLLER);
         storageMotor.setInverted(true);
 
         bottomSwitch = new DigitalInput(0); // TODO: Set actual port
         topSwitch = new DigitalInput(1); // TODO: Set actual port
+
+        encoder = new TalonEncoder(storageMotor);
+        //encoder.setInverted(true);
+        encoder.reset();
 
         storageMode = StorageMode.COLLECTING;
 
@@ -44,12 +48,37 @@ public class Storage implements IMotorPeripheral{
         motorSpeed = REVERSE;
     }
 
-    public void reverse(){
-        isAdvancing = true;
-        backtrack();
-        Timer.delay(DELAY);
+    @Override
+    public void stop(){
+        motorSpeed = LOW;
+    }
+
+    @Override
+    public void init(){
+        storageMode = StorageMode.COLLECTING;
         stop();
         isAdvancing = false;
+        encoder.reset();
+    }
+
+    public void advance(){
+        while(encoder.getPosition() != ROTATIONS_PER_BALL) {
+            isAdvancing = true;
+            start();
+        }
+        stop();
+        isAdvancing = false;
+        encoder.reset();
+    }
+
+    public void reverse(){
+        while(encoder.getPosition() != -ROTATIONS_PER_BALL) {
+            isAdvancing = true;
+            backtrack();
+        }
+        stop();
+        isAdvancing = false;
+        encoder.reset();
     }
 
     public void prime(){
@@ -71,26 +100,6 @@ public class Storage implements IMotorPeripheral{
     }
 
     @Override
-    public void stop(){
-        motorSpeed = LOW;
-    }
-
-    public void advance(){
-        isAdvancing = true;
-        start();
-        Timer.delay(DELAY);
-        stop();
-        isAdvancing = false;
-    }
-
-    @Override
-    public void init(){
-        storageMode = StorageMode.COLLECTING;
-        stop();
-        isAdvancing = false;
-    }
-
-    @Override
     public void periodic(){
         if(!bottomSwitch.get() && !isAdvancing){
             advance();
@@ -104,7 +113,7 @@ public class Storage implements IMotorPeripheral{
             storageMode = StorageMode.FIRING;
         }
 
-        storageMotor.set(motorSpeed);
+        storageMotor.set(ControlMode.PercentOutput, motorSpeed);
     }
 
 }

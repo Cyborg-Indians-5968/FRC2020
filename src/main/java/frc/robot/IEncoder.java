@@ -7,6 +7,8 @@ public interface IEncoder {
     public void setDistancePerPulse(double distance);
 
     public double getDistance();
+
+    public double getPosition();
     
     public void reset();
 

@@ -1,20 +1,19 @@
 package frc.robot;
 
-import com.ctre.phoenix.motorcontrol.ControlMode;
-import com.ctre.phoenix.motorcontrol.can.TalonSRX;
+import com.revrobotics.CANSparkMax;
+import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 public class Launcher implements IMotorPeripheral {
 
-    
-    private TalonSRX launcherMotor;
+    private CANSparkMax launcherMotor;
 
     private double motorSpeed;
-    private static final double HIGH = 0.9;
+    private static final double HIGH = 0.5;
     private static final double LOW = 0.0;
 
     public Launcher() {
-        launcherMotor = new TalonSRX(PortMap.CAN.LAUNCHER_MOTOR_CONTROLLER);
-        // launcherMotor.setInverted(true);
+        launcherMotor = new CANSparkMax(PortMap.CAN.LAUNCHER_MOTOR_CONTROLLER, MotorType.kBrushless);
+        launcherMotor.setInverted(true);
 
         stop();
     }
@@ -37,6 +36,6 @@ public class Launcher implements IMotorPeripheral {
 
     @Override
     public void periodic() {
-        launcherMotor.set(ControlMode.PercentOutput, motorSpeed);
+        launcherMotor.set(motorSpeed);
     }
 }

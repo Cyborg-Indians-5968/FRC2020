@@ -19,7 +19,7 @@ public class TeleoperatedMode implements IRobotMode {
     private static final double RIGHT_STICK_EXPONENT = 3.0;
     private static final double ROTATION_SPEED_THRESHOLD = 0.3;
 
-    public TeleoperatedMode(IDrive drive, IMotorPeripheral roller, IMotorPeripheral launcher, Storage storage) {
+    public TeleoperatedMode(IDrive drive, IMotorPeripheral roller, IMotorPeripheral launcher, Storage storage, IColorWheel wheel) {
 
         xboxController = new XboxController(PortMap.USB.XBOXCONTROLLER);
 
@@ -27,6 +27,7 @@ public class TeleoperatedMode implements IRobotMode {
         this.launcher = launcher;
         this.storage = storage;
         this.roller = roller;
+        this.wheel = wheel;
     }
 
     @Override

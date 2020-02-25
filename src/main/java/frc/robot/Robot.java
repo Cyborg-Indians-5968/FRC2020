@@ -15,6 +15,7 @@ public class Robot extends RobotBase {
     private IMotorPeripheral roller;
     private IMotorPeripheral launcher;
     private Storage storage;
+    private IColorWheel wheel;
     private IGyroscopeSensor gyroscope;
 
     public Robot() {
@@ -26,7 +27,7 @@ public class Robot extends RobotBase {
         drive = new Drive(gyroscope);
         disabledMode = new DisabledMode();
         autonomousMode = new LineAuto(drive);
-        teleoperatedMode = new TeleoperatedMode(drive, roller, launcher, storage);
+        teleoperatedMode = new TeleoperatedMode(drive, roller, launcher, storage, wheel);
     }
 
     @Override
@@ -66,6 +67,7 @@ public class Robot extends RobotBase {
         roller.periodic();
         launcher.periodic();
         storage.periodic();
+        wheel.periodic();
 
         Debug.periodic();
     }

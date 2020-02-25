@@ -7,7 +7,7 @@ public class Roller implements IMotorPeripheral {
     private VictorSPX rollerMotor;
 
     private double motorSpeed;
-    private static final double HIGH = 0.5;
+    private static final double HIGH = 0.3;
     private static final double LOW = 0.0;
 
     public Roller() {
