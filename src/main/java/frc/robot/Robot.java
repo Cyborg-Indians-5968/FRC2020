@@ -16,12 +16,14 @@ public class Robot extends RobotBase {
     private IMotorPeripheral launcher;
     private Storage storage;
     private IGyroscopeSensor gyroscope;
+    private Endgame endgame;
 
     public Robot() {
         gyroscope = new NavXMXP();
         roller = new Roller();
         launcher = new Launcher();
         storage = new Storage();
+        endgame = new Endgame();
 
         drive = new Drive(gyroscope);
         disabledMode = new DisabledMode();
@@ -58,6 +60,7 @@ public class Robot extends RobotBase {
         roller.init();
         launcher.init();
         storage.init();
+        endgame.init();
     }
 
     private void doPeripheralPeriodicProcessing() {
@@ -66,7 +69,8 @@ public class Robot extends RobotBase {
         roller.periodic();
         launcher.periodic();
         storage.periodic();
-
+        endgame.periodic();
+        
         Debug.periodic();
     }
 
