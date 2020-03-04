@@ -7,17 +7,21 @@ public class PortMap {
     }
     
     public class CAN {
-        //TODO: Assign actual port values
-        public static final int FRONT_LEFT_MOTOR = 6;
+        public static final int FRONT_LEFT_MOTOR = 4;
         public static final int FRONT_RIGHT_MOTOR = 2;
-        public static final int REAR_LEFT_MOTOR = 4;
+        public static final int REAR_LEFT_MOTOR = 6;
         public static final int REAR_RIGHT_MOTOR = 5;
-        public static final int ROLLER_MOTOR_CONTROLLER = 15;
-        public static final int WHEEL_MOTOR_CONTROLLER = 15;
-        public static final int LAUNCHER_MOTOR_CONTROLLER = 15;
-        public static final int STORAGE_MOTOR_CONTROLLER = 15;
-
-        public static final int PCM = 0;
+        public static final int ROLLER_MOTOR_CONTROLLER = 0;
+        public static final int WHEEL_MOTOR_CONTROLLER = 20;
+        public static final int LAUNCHER_MOTOR_CONTROLLER = 1;
+        public static final int STORAGE_MOTOR_CONTROLLER = 7;
+        public static final int ENDGAME_RIGHT = 3;
+        public static final int ENDGAME_LEFT = 10;
     }
-    
+
+    public class DIO {
+        public static final int ENDGAME_SWITCH = 2;
+        public static final int TOP_STORAGE = 1;
+        public static final int BOTTOM_STORAGE = 0;
+    }
 }

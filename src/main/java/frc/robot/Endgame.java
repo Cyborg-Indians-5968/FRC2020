@@ -16,9 +16,9 @@ public class Endgame implements IMotorPeripheral {
     private static final double REVERSE = -0.9;
 
     public Endgame(){
-        EndgameSwitch = new DigitalInput(0); //TODO: Set actual port
-        rightMotor = new TalonSRX(PortMap.CAN.LAUNCHER_MOTOR_CONTROLLER);
-        leftMotor = new TalonSRX(PortMap.CAN.LAUNCHER_MOTOR_CONTROLLER);
+        EndgameSwitch = new DigitalInput(PortMap.DIO.ENDGAME_SWITCH);
+        rightMotor = new TalonSRX(PortMap.CAN.ENDGAME_RIGHT);
+        leftMotor = new TalonSRX(PortMap.CAN.ENDGAME_LEFT);
         leftMotor.setInverted(true);
     }
 

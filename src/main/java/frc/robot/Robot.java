@@ -24,9 +24,11 @@ public class Robot extends RobotBase {
         roller = new Roller();
         launcher = new Launcher();
         storage = new Storage();
+        wheel = new NullColorWheel();
         endgame = new Endgame();
 
-        drive = new Drive(gyroscope);
+        //drive = new Drive(gyroscope);
+        drive = new NullDrive();
         disabledMode = new DisabledMode();
         autonomousMode = new LineAuto(drive);
         teleoperatedMode = new TeleoperatedMode(drive, roller, launcher, storage, wheel, endgame);
