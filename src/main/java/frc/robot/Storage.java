@@ -27,8 +27,8 @@ public class Storage implements IMotorPeripheral{
         storageMotor = new TalonSRX(PortMap.CAN.STORAGE_MOTOR_CONTROLLER);
         storageMotor.setInverted(true);
 
-        bottomSwitch = new DigitalInput(0); // TODO: Set actual port
-        topSwitch = new DigitalInput(1); // TODO: Set actual port
+        bottomSwitch = new DigitalInput(PortMap.DIO.BOTTOM_STORAGE);
+        topSwitch = new DigitalInput(PortMap.DIO.TOP_STORAGE);
 
         encoder = new TalonEncoder(storageMotor);
         //encoder.setInverted(true);

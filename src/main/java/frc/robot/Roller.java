@@ -12,7 +12,7 @@ public class Roller implements IMotorPeripheral {
 
     public Roller() {
         rollerMotor = new VictorSPX(PortMap.CAN.ROLLER_MOTOR_CONTROLLER);
-        // rollerMotor.setInverted(true);
+        rollerMotor.setInverted(true);
 
         stop();
     }
