@@ -2,53 +2,96 @@ package frc.robot;
 
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.motorcontrol.ControlMode;
-import edu.wpi.first.wpilibj.DigitalInput;
 
-public class Endgame implements IMotorPeripheral {
+public class Endgame implements IEndgame {
 
-    private DigitalInput EndgameSwitch;
-    private double motorSpeed;
     private TalonSRX rightMotor;
     private TalonSRX leftMotor;
+    private IEncoder rightEncoder;
+    private IEncoder leftEncoder;
 
-    private static final double HIGH = 0.9;
-    private static final double LOW = 0.0;
-    private static final double REVERSE = -0.9;
+    private double rightSpeed;
+    private double leftSpeed;
+
+    private EndgameClimbingMode climbMode;
+    private static final double HIGH = 1.0;
+    private static final double LOW = 0.7;
+    private static final double MAX_HEIGHT = 17700.0;
+    private static final double MAX_ERROR = 25.0;
+
+    private enum EndgameClimbingMode {
+        UP,
+        DOWN,
+        NONE,
+    }
 
     public Endgame(){
-        EndgameSwitch = new DigitalInput(PortMap.DIO.ENDGAME_SWITCH);
         rightMotor = new TalonSRX(PortMap.CAN.ENDGAME_RIGHT);
         leftMotor = new TalonSRX(PortMap.CAN.ENDGAME_LEFT);
         leftMotor.setInverted(true);
+        
+        rightEncoder = new TalonEncoder(rightMotor);
+        leftEncoder = new TalonEncoder(leftMotor);
     }
 
-    @Override
-    public void stop() {
-        motorSpeed = LOW;
+    public void raise() {
+        climbMode = EndgameClimbingMode.UP;
     }
 
-    @Override
-    public void start() {
-        motorSpeed = HIGH;
+    public void lower() {
+        climbMode = EndgameClimbingMode.DOWN;
     }
 
-    public void reverse() {
-        motorSpeed = REVERSE;
+    public void resetEncoders() {
+        leftEncoder.reset();
+        rightEncoder.reset();
     }
 
-    @Override
     public void init() {
-        stop();
+        climbMode = EndgameClimbingMode.NONE;
+        resetEncoders();
     }
 
-	@Override
 	public void periodic() {
-		if(EndgameSwitch.get()) {
-            motorSpeed = LOW;
+        
+        double leftPosition = leftEncoder.getPosition();
+        double rightPosition = rightEncoder.getPosition();
+        boolean disableMovement = false;
+
+        if(climbMode == EndgameClimbingMode.NONE) {
+            disableMovement = true;
+        } else if(climbMode == EndgameClimbingMode.UP) {
+            if(leftPosition > MAX_HEIGHT || rightPosition > MAX_HEIGHT) {
+                disableMovement = true;
+            }
+        } else {
+            if(leftPosition < 0.0 || rightPosition < 0.0) {
+                disableMovement = true;
+            }
         }
-        rightMotor.set(ControlMode.PercentOutput, motorSpeed);
-        leftMotor.set(ControlMode.PercentOutput, motorSpeed);
+
+        double encoderDelta = leftPosition - rightPosition;
+        if(climbMode == EndgameClimbingMode.DOWN) {
+            encoderDelta = -encoderDelta;
+        }
+
+        if(Math.abs(encoderDelta) > MAX_ERROR) {
+            if(encoderDelta > 0) {
+                leftSpeed = LOW;
+                rightSpeed = HIGH;
+            } else {
+                leftSpeed = HIGH;
+                rightSpeed = LOW;
+            }
+        }
+        if(climbMode == EndgameClimbingMode.DOWN) {
+            leftSpeed = -leftSpeed;
+            rightSpeed = -rightSpeed;
+        }
+
+        leftMotor.set(ControlMode.PercentOutput, disableMovement ? 0.0 : leftSpeed);
+        rightMotor.set(ControlMode.PercentOutput, disableMovement ? 0.0 : rightSpeed);
+
+        climbMode = EndgameClimbingMode.NONE;
 	}
-
-
 }

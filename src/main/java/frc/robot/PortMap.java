@@ -11,17 +11,15 @@ public class PortMap {
         public static final int FRONT_RIGHT_MOTOR = 2;
         public static final int REAR_LEFT_MOTOR = 6;
         public static final int REAR_RIGHT_MOTOR = 5;
-        public static final int ROLLER_MOTOR_CONTROLLER = 0;
+        public static final int INTAKE_MOTOR_CONTROLLER = 0;
         public static final int WHEEL_MOTOR_CONTROLLER = 20;
-        public static final int LAUNCHER_MOTOR_CONTROLLER = 1;
+        public static final int SHOOTER_MOTOR_CONTROLLER = 1;
         public static final int STORAGE_MOTOR_CONTROLLER = 7;
         public static final int ENDGAME_RIGHT = 3;
         public static final int ENDGAME_LEFT = 10;
     }
 
     public class DIO {
-        public static final int ENDGAME_SWITCH = 2;
-        public static final int TOP_STORAGE = 1;
         public static final int BOTTOM_STORAGE = 0;
     }
 }

@@ -8,11 +8,9 @@ public class TeleoperatedMode implements IRobotMode {
 
     private XboxController xboxController;
     private IDrive drive;
-    private IMotorPeripheral roller;
-    private IMotorPeripheral launcher;
-    private Storage storage;
+    private ILauncher launcher;
     private IColorWheel wheel;
-    private Endgame endgame;
+    private IEndgame endgame;
     
     private String data;
 
@@ -20,14 +18,11 @@ public class TeleoperatedMode implements IRobotMode {
     private static final double RIGHT_STICK_EXPONENT = 3.0;
     private static final double ROTATION_SPEED_THRESHOLD = 0.3;
 
-    public TeleoperatedMode(IDrive drive, IMotorPeripheral roller, IMotorPeripheral launcher, Storage storage, IColorWheel wheel, Endgame endgame) {
-
+    public TeleoperatedMode(IDrive drive, ILauncher launcher, IColorWheel wheel, IEndgame endgame) {
         xboxController = new XboxController(PortMap.USB.XBOXCONTROLLER);
 
         this.drive = drive;
         this.launcher = launcher;
-        this.storage = storage;
-        this.roller = roller;
         this.wheel = wheel;
         this.endgame = endgame;
     }
@@ -65,47 +60,39 @@ public class TeleoperatedMode implements IRobotMode {
             drive.lookAt(angle, 0);
         }
 
-        if (xboxController.getBumper(Hand.kLeft)){
-            roller.start();
-        } else {
-            roller.stop();
+        if (xboxController.getBumper(Hand.kRight)){
+            launcher.shoot();
         }
 
-        if (xboxController.getBumper(Hand.kRight) && storage.storageMode == StorageMode.FIRING) {
-            launcher.start();
-            storage.advance();
-         } else {
-            launcher.stop();
+        if (xboxController.getBumper(Hand.kLeft)) {
+            launcher.intake();
         }
 
         if (xboxController.getAButton()) {
-            storage.unprime();
+            launcher.reverse();
         }
 
         if (xboxController.getBButton()) {
-            storage.prime();
+            launcher.advance();
         }
 
         if (xboxController.getYButton()) {
-            endgame.start();
-        } else {
-            endgame.stop();
+            endgame.raise();
         }
 
         if (xboxController.getXButton()) {
-            endgame.reverse();
-        } else {
-            endgame.stop();
-        }
+            endgame.lower();
+        } 
 
+        /*
         data = DriverStation.getInstance().getGameSpecificMessage();
-        if (xboxController.getAButton()) {
+        if (xboxController.getBumper(Hand.kRight)) {
             if (data.length() > 0){
                 wheel.spinToColor(data.charAt(0));
             } else {
                 wheel.spinRevolutions();
             }
         }
-
+        */
     }
 }   
