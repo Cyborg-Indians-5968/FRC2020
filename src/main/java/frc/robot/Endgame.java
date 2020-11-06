@@ -1,14 +1,12 @@
 package frc.robot;
 
-import com.ctre.phoenix.motorcontrol.can.TalonSRX;
-import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.revrobotics.CANSparkMax;
+import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 public class Endgame implements IEndgame {
 
-    private TalonSRX rightMotor;
-    private TalonSRX leftMotor;
-    private IEncoder rightEncoder;
-    private IEncoder leftEncoder;
+    private CANSparkMax rightMotor;
+    private CANSparkMax leftMotor;
 
     private double rightSpeed;
     private double leftSpeed;
@@ -26,12 +24,9 @@ public class Endgame implements IEndgame {
     }
 
     public Endgame(){
-        rightMotor = new TalonSRX(PortMap.CAN.ENDGAME_RIGHT);
-        leftMotor = new TalonSRX(PortMap.CAN.ENDGAME_LEFT);
+        rightMotor = new CANSparkMax(PortMap.CAN.ENDGAME_RIGHT, MotorType.kBrushless);
+        leftMotor = new CANSparkMax(PortMap.CAN.ENDGAME_LEFT, MotorType.kBrushless);
         leftMotor.setInverted(true);
-        
-        rightEncoder = new TalonEncoder(rightMotor);
-        leftEncoder = new TalonEncoder(leftMotor);
     }
 
     public void raise() {
@@ -43,8 +38,8 @@ public class Endgame implements IEndgame {
     }
 
     public void resetEncoders() {
-        leftEncoder.reset();
-        rightEncoder.reset();
+        leftMotor.getEncoder().setPosition(0);
+        rightMotor.getEncoder().setPosition(0);
     }
 
     public void init() {
@@ -54,8 +49,8 @@ public class Endgame implements IEndgame {
 
 	public void periodic() {
         
-        double leftPosition = leftEncoder.getPosition();
-        double rightPosition = rightEncoder.getPosition();
+        double leftPosition = leftMotor.getEncoder().getPosition();
+        double rightPosition = rightMotor.getEncoder().getPosition();
         boolean disableMovement = false;
 
         if(climbMode == EndgameClimbingMode.NONE) {
@@ -89,8 +84,8 @@ public class Endgame implements IEndgame {
             rightSpeed = -rightSpeed;
         }
 
-        leftMotor.set(ControlMode.PercentOutput, disableMovement ? 0.0 : leftSpeed);
-        rightMotor.set(ControlMode.PercentOutput, disableMovement ? 0.0 : rightSpeed);
+        leftMotor.set(disableMovement ? 0.0 : leftSpeed);
+        rightMotor.set(disableMovement ? 0.0 : rightSpeed);
 
         climbMode = EndgameClimbingMode.NONE;
 	}
