@@ -15,19 +15,17 @@ public class Robot extends RobotBase {
     private ILauncher launcher;
     private IColorWheel wheel;
     private IGyroscopeSensor gyroscope;
-    private Endgame endgame;
 
     public Robot() {
         gyroscope = new NavXMXP();
         launcher = new Launcher();
         wheel = new NullColorWheel();
-        endgame = new Endgame();
 
-        //drive = new Drive(gyroscope);
-        drive = new NullDrive();
+        drive = new Drive(gyroscope);
+        //drive = new NullDrive();
         disabledMode = new DisabledMode();
         autonomousMode = new LineAuto(drive);
-        teleoperatedMode = new TeleoperatedMode(drive, launcher, wheel, endgame);
+        teleoperatedMode = new TeleoperatedMode(drive, launcher, wheel);
     }
 
     @Override
@@ -57,7 +55,6 @@ public class Robot extends RobotBase {
         drive.init();
 
         launcher.init();
-        endgame.init();
     }
 
     private void doPeripheralPeriodicProcessing() {
@@ -65,7 +62,6 @@ public class Robot extends RobotBase {
         
         launcher.periodic();
         wheel.periodic();
-        endgame.periodic();
         
         Debug.periodic();
     }
