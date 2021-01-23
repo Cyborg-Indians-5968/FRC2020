@@ -156,9 +156,15 @@ public class Drive implements IDrive {
 
     private void manualControlPeriodic() {
         double deltaAngle = (desiredAngle - gyroscope.getYaw() + (Math.PI * 3)) % (Math.PI * 2) - Math.PI;
-        double actualSpeed = angularSpeed * (-deltaAngle / Math.PI);
+        double actualSpeed = angularSpeed * (deltaAngle / Math.PI);
+
+        Debug.logPeriodic("Yaw: " + (gyroscope.getYaw() / Math.PI) + "pi");
+        Debug.logPeriodic("Desired Angle: " + (desiredAngle / Math.PI) + "pi");
+        Debug.logPeriodic("deltaAngle: " + (deltaAngle / Math.PI) + "pi");
+        Debug.logPeriodic("-----------------------");
         
-        driveBase.driveCartesian(xDirectionSpeed, yDirectionSpeed, gyroscope.getYaw() != desiredAngle ? actualSpeed : 0);
+        driveBase.driveCartesian(yDirectionSpeed, xDirectionSpeed, gyroscope.getYaw() != desiredAngle ? actualSpeed : 0);
+        //driveBase.driveCartesian(0, 0, 0);
     }
 
     @Override
