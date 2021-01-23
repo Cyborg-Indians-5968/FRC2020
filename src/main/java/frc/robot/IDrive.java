@@ -6,7 +6,7 @@ public interface IDrive {
 
     public DriveMode getCurrentDriveMode();
 
-    public void driveDistance(double distanceInches, double xDirectionSpeed, double yDirectionSpeed);
+    public void driveDistance(double distanceInches, double forwardSpeed, double strafeSpeed);
 
     // This turns the robot a relative angle
     public void rotateDegrees(double angle, double angularSpeed);
@@ -14,14 +14,14 @@ public interface IDrive {
     /*
      * completionRoutine is called when the current action has been completed
      */
-    public void driveDistance(double distanceInches, double xDirectionSpeed, double yDirectionSpeed, Runnable completionRoutine);
+    public void driveDistance(double distanceInches, double forwardSpeed, double strafeSpeed, Runnable completionRoutine);
 
     public void rotateDegrees(double angle, double angularSpeed, Runnable completionRoutine);
 
     /*
      * This is the method used to drive manually during teleoperated mode
      */
-    public void driveManual(double xDirectionSpeed, double yDirectionSpeed);
+    public void driveManual(double forwardSpeed, double strafeSpeed);
 
     // This turns the robot to an absolute field angle
     public void lookAt(double angle);

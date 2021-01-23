@@ -20,8 +20,8 @@ public class Drive implements IDrive {
     private WPI_TalonSRX rearLeftMotor;
     private WPI_TalonSRX rearRightMotor;
 
-    private double xDirectionSpeed;
-    private double yDirectionSpeed;
+    private double forwardSpeed;
+    private double strafeSpeed;
     private double angularSpeed;
     private double desiredAngle;
     private double desiredDistance;
@@ -72,8 +72,8 @@ public class Drive implements IDrive {
     }
 
     @Override
-    public void driveDistance(double distanceInches, double xDirectionSpeed, double yDirectionSpeed) {
-        driveDistance(distanceInches, xDirectionSpeed, yDirectionSpeed, null);
+    public void driveDistance(double distanceInches, double forwardSpeed, double strafeSpeed) {
+        driveDistance(distanceInches, forwardSpeed, strafeSpeed, null);
     }
 
     @Override
@@ -82,12 +82,12 @@ public class Drive implements IDrive {
     }
 
     @Override
-    public void driveDistance(double distanceInches, double xDirectionSpeed, double yDirectionSpeed, Runnable completionRoutine) {
+    public void driveDistance(double distanceInches, double forwardSpeed, double strafeSpeed, Runnable completionRoutine) {
         driveMode = DriveMode.AUTODRIVING;
         
         setCompletionRoutine(completionRoutine);
-        this.xDirectionSpeed = xDirectionSpeed;
-        this.yDirectionSpeed = yDirectionSpeed;
+        this.forwardSpeed = forwardSpeed;
+        this.strafeSpeed = strafeSpeed;
         desiredDistance = distanceInches;
 
         leftEncoder.reset();
@@ -104,14 +104,14 @@ public class Drive implements IDrive {
     }
 
     @Override
-    public void driveManual(double xDirectionSpeed, double yDirectionSpeed) {
+    public void driveManual(double forwardSpeed, double strafeSpeed) {
         driveMode = DriveMode.DRIVERCONTROL;
 
-        double absoluteY = yDirectionSpeed * Math.cos(gyroscope.getYaw()) + xDirectionSpeed * Math.sin(gyroscope.getYaw());
-        double absoluteX = -yDirectionSpeed * Math.sin(gyroscope.getYaw()) + xDirectionSpeed * Math.cos(gyroscope.getYaw()); 
+        double absoluteForward = forwardSpeed * Math.cos(gyroscope.getYaw()) + strafeSpeed * Math.sin(gyroscope.getYaw());
+        double absoluteStrafe = -forwardSpeed * Math.sin(gyroscope.getYaw()) + strafeSpeed * Math.cos(gyroscope.getYaw()); 
 
-        this.xDirectionSpeed = absoluteX;
-        this.yDirectionSpeed = absoluteY;
+        this.forwardSpeed = absoluteForward;
+        this.strafeSpeed = absoluteStrafe;
         setCompletionRoutine(null);
     }
 
@@ -163,7 +163,7 @@ public class Drive implements IDrive {
         Debug.logPeriodic("deltaAngle: " + (deltaAngle / Math.PI) + "pi");
         Debug.logPeriodic("-----------------------");
         
-        driveBase.driveCartesian(yDirectionSpeed, xDirectionSpeed, gyroscope.getYaw() != desiredAngle ? actualSpeed : 0);
+        driveBase.driveCartesian(strafeSpeed, forwardSpeed, gyroscope.getYaw() != desiredAngle ? actualSpeed : 0);
         //driveBase.driveCartesian(0, 0, 0);
     }
 
@@ -184,7 +184,7 @@ public class Drive implements IDrive {
             double deltaAngle = (desiredAngle + (Math.PI * 3)) % (Math.PI * 2) - Math.PI;
             double actualSpeed = angularSpeed * (-deltaAngle / Math.PI);
             
-            driveBase.driveCartesian(yDirectionSpeed, xDirectionSpeed, gyroscope.getYaw() != desiredAngle ? actualSpeed : 0);
+            driveBase.driveCartesian(strafeSpeed, forwardSpeed, gyroscope.getYaw() != desiredAngle ? actualSpeed : 0);
 
             // Check if we've completed our travel
             double averageDistanceTraveled = Math.abs((leftEncoder.getDistance() + rightEncoder.getDistance()) / 2);
