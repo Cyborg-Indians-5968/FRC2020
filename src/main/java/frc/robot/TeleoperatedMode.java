@@ -2,27 +2,23 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj.GenericHID.Hand;
 import edu.wpi.first.wpilibj.XboxController;
-import edu.wpi.first.wpilibj.DriverStation;
+//import edu.wpi.first.wpilibj.DriverStation;
 
 public class TeleoperatedMode implements IRobotMode {
 
     private XboxController xboxController;
     private IDrive drive;
     private ILauncher launcher;
-    private IColorWheel wheel;
-    
-    private String data;
 
     private static final double LEFT_STICK_EXPONENT = 3.0;
     private static final double RIGHT_STICK_EXPONENT = 3.0;
     private static final double ROTATION_SPEED_THRESHOLD = 0.3;
 
-    public TeleoperatedMode(IDrive drive, ILauncher launcher, IColorWheel wheel) {
+    public TeleoperatedMode(IDrive drive, ILauncher launcher) {
         xboxController = new XboxController(PortMap.USB.XBOXCONTROLLER);
 
         this.drive = drive;
         this.launcher = launcher;
-        this.wheel = wheel;
     }
 
     @Override
