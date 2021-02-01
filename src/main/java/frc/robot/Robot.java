@@ -25,7 +25,7 @@ public class Robot extends RobotBase {
         //drive = new NullDrive();
         disabledMode = new DisabledMode();
         autonomousMode = new AutonomousMode(drive, launcher);
-        teleoperatedMode = new TeleoperatedMode(drive, launcher);
+        teleoperatedMode = new TeleoperatedMode(drive, launcher, wheel);
     }
 
     @Override
