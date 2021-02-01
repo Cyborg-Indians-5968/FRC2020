@@ -22,14 +22,14 @@ public class AutonomousMode implements IRobotMode {
             /*
             if (limelight == A) {
                 return AutoMode.GALACTIC_A;
-            } else if (limelight == B {
+            } else {
                 return AutoMode.GALACTIC_B;
             }
             */
             return null;
             //TODO: determine if running galacitc A or B
         } else if (xboxController.getPOV() == 180) {
-            return AutoMode.SHOOTING;
+            return AutoMode.AIMING;
         } else {
             return null;
         }
@@ -44,8 +44,8 @@ public class AutonomousMode implements IRobotMode {
                 return new AutoGalacticA(drive, launcher);
             case GALACTIC_B:
                 return new AutoGalacticB(drive, launcher);
-            case SHOOTING:
-                return new AutoShooter(drive, launcher);
+            case AIMING:
+                return new AutoAiming(drive, launcher);
             default:
                 throw new IllegalArgumentException("invalid autonomous mode");
         }
@@ -55,7 +55,7 @@ public class AutonomousMode implements IRobotMode {
     @Override
     public void init() {
         determineAutoMode();
-        Debug.log(getAutoRobotMode().toString());
+        Debug.log(getAutoRobotMode().getClass().getName());
     }
 
     @Override

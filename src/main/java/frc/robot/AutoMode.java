@@ -4,5 +4,5 @@ public enum AutoMode {
     GALACTIC_A,
     GALACTIC_B,
     AUTONAV,
-    SHOOTING
+    AIMING
 }

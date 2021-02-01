@@ -1,11 +1,11 @@
 package frc.robot;
 
-public class AutoShooter implements IRobotMode {
+public class AutoAiming implements IRobotMode {
     
     private IDrive drive;
     private ILauncher launcher;
 
-    public AutoShooter(IDrive drive, ILauncher launcher) {
+    public AutoAiming(IDrive drive, ILauncher launcher) {
         this.drive = drive;
         this.launcher = launcher;
     }
