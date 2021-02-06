@@ -10,7 +10,7 @@ public class TeleoperatedMode implements IRobotMode {
     private IDrive drive;
     private ILauncher launcher;
     private IColorWheel wheel;
-    
+
     private String data;
 
     private static final double LEFT_STICK_EXPONENT = 3.0;
@@ -82,6 +82,8 @@ public class TeleoperatedMode implements IRobotMode {
         }
 
         /*
+        //color wheel code 
+        //never tested so may not work
         data = DriverStation.getInstance().getGameSpecificMessage();
         if (xboxController.getBumper(Hand.kRight)) {
             if (data.length() > 0){
