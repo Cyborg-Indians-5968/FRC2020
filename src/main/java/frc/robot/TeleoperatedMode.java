@@ -60,6 +60,13 @@ public class TeleoperatedMode implements IRobotMode {
 
         if (xboxController.getBumper(Hand.kRight)){
             launcher.shoot();
+            /* This is here because the shooter stops once you advance the ball. In theory,
+               it should work without this if statement, so it might be a battery problem. */
+            if (xboxController.getBButton()) {
+                launcher.advance();
+            }
+        } else {
+            launcher.stopShooting();
         }
 
         if (xboxController.getBumper(Hand.kLeft)) {
