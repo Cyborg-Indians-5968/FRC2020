@@ -3,7 +3,9 @@ package frc.robot;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.VictorSPX;
+import com.revrobotics.CANPIDController;
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.ControlType;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import edu.wpi.first.wpilibj.DigitalInput;
 
@@ -16,6 +18,7 @@ public class Launcher implements ILauncher {
     private DigitalInput storageSwitch;
     
     private CANSparkMax shooterMotor;
+    private CANPIDController shooterPIDController;
 
     private enum LauncherMode {
         IDLE,
@@ -24,28 +27,31 @@ public class Launcher implements ILauncher {
         ADVANCE,
         REVERSE,
         SHOOT,
+        DONT_SHOOT,
     }
     private LauncherMode launcherMode = LauncherMode.IDLE;
 
     private double intakeSpeed = 0.0;
     private double storageSpeed = 0.0;
 
-    private static final double INTAKE_HIGH = 0.5;
+    private static final double INTAKE_HIGH = 0.65;
     private static final double STORAGE_HIGH = 0.5;
 
     private static final double ADVANCE_ONE_BALL_ROTATIONS = 16000.0;
     private static final double INITIAL_INTAKE_ROTATIONS = 14000.0;
 
-    private static final double SHOOTER_ENABLED_RPM = 2400.0; //2800.0;
-    private double shooterGoalRpm = 0.0;
-    private double shooterPower = 0.0;
-    private double shooterPowerVelocity = 0.0;
-    private static final double SHOOTER_POWER_ACCELERATION = 0.0001;
-    private static final double MAX_RPM_ERROR = 300.0;
+    // TODO: Tune these constants for each RPM we need
+    private double kP = 0.00125;
+    private double kI = 0.0;
+    private double kD = 0.0;
+    private double kF = 0.000215;
+    private double maxOutput = 1.0;
+    private double minOutput = 0.0;
+    private double shooterSetPoint = 0.0;
+    private double maxRPM = 2000.0; //2800.0;
 
     public Launcher() {
         intakeMotor = new VictorSPX(PortMap.CAN.INTAKE_MOTOR_CONTROLLER);
-        intakeMotor.setInverted(true);
 
         storageMotor = new TalonSRX(PortMap.CAN.STORAGE_MOTOR_CONTROLLER);
         storageEncoder = new TalonEncoder(storageMotor);
@@ -54,6 +60,12 @@ public class Launcher implements ILauncher {
 
         shooterMotor = new CANSparkMax(PortMap.CAN.SHOOTER_MOTOR_CONTROLLER, MotorType.kBrushless);
         shooterMotor.setInverted(true);
+        shooterPIDController = shooterMotor.getPIDController();
+        shooterPIDController.setP(kP);
+        shooterPIDController.setI(kI);
+        shooterPIDController.setD(kD);
+        shooterPIDController.setFF(kF);
+        shooterPIDController.setOutputRange(minOutput, maxOutput);
     }
 
     public void init() {
@@ -65,7 +77,13 @@ public class Launcher implements ILauncher {
     public void stop() {
         intakeSpeed = 0.0;
         storageSpeed = 0.0;
-        shooterGoalRpm = 0.0;
+        shooterSetPoint = 0.0;
+    }
+
+    public void stopShooting() {
+        if(launcherMode == LauncherMode.SHOOT) {
+            launcherMode = LauncherMode.DONT_SHOOT;
+        }
     }
 
     public void intake() {
@@ -116,28 +134,13 @@ public class Launcher implements ILauncher {
                 storageSpeed = -STORAGE_HIGH;
             }
         } else if(launcherMode == LauncherMode.SHOOT) {
-            double shooterRpm = shooterMotor.getEncoder().getVelocity();
-            shooterGoalRpm = SHOOTER_ENABLED_RPM;
-
-            if(Math.abs(shooterGoalRpm - shooterRpm) > MAX_RPM_ERROR) {
-                shooterPowerVelocity += SHOOTER_POWER_ACCELERATION;
-            } else {
-                shooterPowerVelocity = SHOOTER_POWER_ACCELERATION;
-            }
-
-            if(shooterRpm < shooterGoalRpm) {
-                shooterPower += shooterPowerVelocity;
-            } else if(shooterRpm > shooterGoalRpm) {
-                shooterPower -= shooterPowerVelocity;
-            }
-
-            if (shooterPower < 0.1 && shooterGoalRpm != 0.0) {
-                shooterPower = 0.1;
-            }
+            shooterSetPoint = maxRPM;
+        } else if(launcherMode == LauncherMode.DONT_SHOOT) {
+            shooterSetPoint = 0.0;
         }
 
         intakeMotor.set(ControlMode.PercentOutput, intakeSpeed);
         storageMotor.set(ControlMode.PercentOutput, storageSpeed);
-        shooterMotor.set(shooterPower);
+        shooterPIDController.setReference(shooterSetPoint, ControlType.kVelocity);
     }
 }
