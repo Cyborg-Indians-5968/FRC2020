@@ -8,22 +8,22 @@ public class NullDrive implements IDrive {
         return DriveMode.DRIVERCONTROL;
     }
 
-    public void rotateDegrees(double angle) {
+    public void rotateRelative(double angle) {
     }
 
-    public void lookAt(double angle) {
+    public void rotateAbsolute(double angle) {
     }
 
-    public void driveDistance(double distanceInches, double xDirectionSpeed, double yDirectionSpeed) {
+    public void driveDistance(double distanceInches, double speed, double angle) {
     }
 
-    public void driveDistance(double distanceInches, double xDirectionSpeed, double yDirectionSpeed, Runnable completionRoutine) {
+    public void driveDistance(double distanceInches, double speed, double angle, Runnable completionRoutine) {  
     }
 
-    public void rotateDegrees(double angle, Runnable completionRoutine) {
+    public void rotateRelative(double angle, Runnable completionRoutine) {
     }
 
-    public void lookAt(double angle, Runnable completionRoutine) {
+    public void rotateAbsolute(double angle, Runnable completionRoutine) {
     }
 
     public void driveManual(double xDirectionSpeed, double yDirectionSpeed) {

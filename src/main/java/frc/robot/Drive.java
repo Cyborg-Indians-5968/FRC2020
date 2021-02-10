@@ -27,10 +27,15 @@ public class Drive implements IDrive {
     private WPI_TalonSRX rearLeftMotor;
     private WPI_TalonSRX rearRightMotor;
 
+    // Teleoperated
     private double forwardSpeed;
     private double strafeSpeed;
     private double angularSpeed;
     private double desiredAngle;
+
+    // Autonomous
+    private double autoSpeed;
+    private double autoAngle;
     private double desiredDistance;
 
     private static final double WHEEL_DIAMETER = 8.0; // inches
@@ -84,51 +89,51 @@ public class Drive implements IDrive {
     }
 
     @Override
-    public void rotateDegrees(double angle) {
+    public void rotateRelative(double angle) {
         driveMode = DriveMode.DRIVERCONTROL;
         
-        this.desiredAngle = gyroscope.getYaw() + angle; 
+        desiredAngle = gyroscope.getYaw() + angle; 
     }
 
     @Override
-    public void lookAt(double angle) {
+    public void rotateAbsolute(double angle) {
         driveMode = DriveMode.DRIVERCONTROL;
 
-        this.desiredAngle = angle;
+        desiredAngle = angle;
     }
 
     @Override
-    public void driveDistance(double distanceInches, double forwardSpeed, double strafeSpeed) {
-        driveDistance(distanceInches, forwardSpeed, strafeSpeed, null);
+    public void driveDistance(double distanceInches, double speed, double angle) {
+        driveDistance(distanceInches, speed, angle, null);
     }
 
     @Override
-    public void driveDistance(double distanceInches, double forwardSpeed, double strafeSpeed, Runnable completionRoutine) {
+    public void driveDistance(double distanceInches, double speed, double angle, Runnable completionRoutine) {
         driveMode = DriveMode.AUTODRIVING;
         
         setCompletionRoutine(completionRoutine);
-        this.forwardSpeed = forwardSpeed;
-        this.strafeSpeed = strafeSpeed;
         desiredDistance = distanceInches;
+        autoSpeed = speed;
+        autoAngle = Math.toRadians(angle);
 
         leftEncoder.reset();
         rightEncoder.reset();
     }
 
     @Override
-    public void rotateDegrees(double angle, Runnable completionRoutine) {
+    public void rotateRelative(double angle, Runnable completionRoutine) {
         driveMode = DriveMode.AUTODRIVING;
         
         setCompletionRoutine(completionRoutine);
-        this.desiredAngle = gyroscope.getYaw() + angle;
+        desiredAngle = gyroscope.getYaw() + Math.toRadians(angle);
     }
 
     @Override
-    public void lookAt(double angle, Runnable completionRoutine) {
+    public void rotateAbsolute(double angle, Runnable completionRoutine) {
         driveMode = DriveMode.AUTODRIVING;
         
         setCompletionRoutine(completionRoutine);
-        this.desiredAngle = angle;
+        desiredAngle = Math.toRadians(angle);
     }
 
     @Override
@@ -195,7 +200,7 @@ public class Drive implements IDrive {
         } else if (driveMode == DriveMode.AUTODRIVING) {
             angularSpeed = rotationController.calculate(gyroscope.getYaw(), desiredAngle);
         
-            driveBase.driveCartesian(strafeSpeed, forwardSpeed, angularSpeed);
+            driveBase.drivePolar(autoSpeed, autoAngle, angularSpeed);
 
             // Check if we've completed our travel
             double averageDistanceTraveled = Math.abs((leftEncoder.getDistance() + rightEncoder.getDistance()) / 2);

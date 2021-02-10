@@ -52,7 +52,7 @@ public class TeleoperatedMode implements IRobotMode {
         double angle = Math.atan2(rightX, rightY);
         
         if(Math.sqrt(Math.pow(rightX, 2) + Math.pow(rightY, 2)) > ROTATION_THRESHOLD) {
-            drive.lookAt(angle);
+            drive.rotateAbsolute(angle);
         }
 
         // Process Peripheral control
