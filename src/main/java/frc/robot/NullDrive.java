@@ -3,29 +3,30 @@
 package frc.robot;
 
 public class NullDrive implements IDrive {
+    
     public DriveMode getCurrentDriveMode() {
         return DriveMode.DRIVERCONTROL;
     }
 
-    public void driveDistance(double distanceInches, double xDirectionSpeed, double yDirectionSpeed) {
+    public void rotateRelative(double angle) {
     }
 
-    public void rotateDegrees(double angle, double angularSpeed) {
+    public void rotateAbsolute(double angle) {
     }
 
-    public void driveDistance(double distanceInches, double xDirectionSpeed, double yDirectionSpeed, Runnable completionRoutine) {
+    public void driveDistance(double distanceInches, double speed, double angle) {
     }
 
-    public void rotateDegrees(double angle, double angularSpeed, Runnable completionRoutine) {
+    public void driveDistance(double distanceInches, double speed, double angle, Runnable completionRoutine) {  
+    }
+
+    public void rotateRelative(double angle, Runnable completionRoutine) {
+    }
+
+    public void rotateAbsolute(double angle, Runnable completionRoutine) {
     }
 
     public void driveManual(double xDirectionSpeed, double yDirectionSpeed) {
-    }
-
-    public void lookAt(double angle) {
-    }
-
-    public void lookAt(double angle, double angularSpeed) {
     }
 
     public void stop() {
