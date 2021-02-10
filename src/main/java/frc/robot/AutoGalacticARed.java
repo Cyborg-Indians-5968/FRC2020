@@ -1,11 +1,11 @@
 package frc.robot;
 
-public class AutoGalacticA implements IRobotMode {
+public class AutoGalacticARed implements IRobotMode {
     
     private IDrive drive;
     private ILauncher launcher;
 
-    public AutoGalacticA(IDrive drive, ILauncher launcher) {
+    public AutoGalacticARed(IDrive drive, ILauncher launcher) {
         this.drive = drive;
         this.launcher = launcher;
     }

@@ -3,52 +3,52 @@ package frc.robot;
 public class AutoNavBounce implements IRobotMode {
 
     private IDrive Drive;
-    private double rotationSpeed = 0.2;
-    private double driveSpeed = 0.4;
+    private double angularSpeed = 0.2;
+    private double forwardSpeed = 0.4;
 
-    public AutoNav(IDrive drive) {
+    public AutoNavBounce(IDrive drive) {
         this.drive = drive;
     }
 
     @Override
-    public void Init() { // Bounce Auto Code
+    public void init() { // Bounce Auto Code
 
-    }
-    
-    @Override
-    public void periodic() {
-        //Nothing to do 
     }
 
     @Override
     public void driveStraight() {
-        drive.distance(30, driveSpeed, null);
+        drive.distance(30, forwardSpeed, null);
     }
 
     @Override
     public void driveStraightLong() {
-        drive.driveDistance(60, driveSpeed, null);
+        drive.driveDistance(60, forwardSpeed, null);
     }
 
     @Override
     public void turnRight() {
-        drive.rotationSpeed(90, rotationSpeed);
+        drive.lookAt(90, angularSpeed);
     }
 
     @Override
     public void turnLeft() {
-        drive.rotationSpeed(-90, rotationSpeed);
+        drive.lookAt(-90, angularSpeed);
     }
 
     @Override
     public void turnRightLong() {
-        drive.rotationSpeed(90, rotationSpeed);
+        drive.lookAt(90, angularSpeed);
         driveStraight();
     }
 
     @Override
     public void turnLeftLong() {
-        drive.rotationSpeed(-90, rotationSpeed);
+        drive.lookAt(-90, angularSpeed);
         driveStraight();
+    }
+
+    @Override
+    public void periodic() {
+        //Nothing to do 
     }
 }
