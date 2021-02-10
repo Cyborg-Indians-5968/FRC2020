@@ -4,6 +4,7 @@ import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.drive.MecanumDrive;
+import edu.wpi.first.wpilibj.controller.PIDController;
 
 public class Drive implements IDrive {
 
@@ -14,6 +15,12 @@ public class Drive implements IDrive {
     private Runnable currentCompletionRoutine;
     private IEncoder leftEncoder;
     private IEncoder rightEncoder;
+
+    // Just proportional gain works for now, add other gains if needed
+    private PIDController rotationController;
+    private double kP = 0.6;
+    private double kI = 0.0;
+    private double kD = 0.0;
     
     private WPI_TalonSRX frontLeftMotor;
     private WPI_TalonSRX frontRightMotor;
@@ -28,6 +35,7 @@ public class Drive implements IDrive {
 
     private static final double WHEEL_DIAMETER = 8.0; // inches
     private static final double ENCODER_RESOLUTION = 2048.0;
+    private static final double ROTATION_TOLERANCE_DEGREES = 2.0;
 
     public Drive(IGyroscopeSensor gyroscope) {
         
@@ -64,6 +72,10 @@ public class Drive implements IDrive {
         rightEncoder.setDistancePerPulse(distancePerPulse);
 
         leftEncoder.setInverted(true);
+
+        rotationController = new PIDController(kP, kI, kD);
+        rotationController.enableContinuousInput(-Math.PI, Math.PI);
+        rotationController.setTolerance(Math.toRadians(ROTATION_TOLERANCE_DEGREES));
     }
 
     @Override
@@ -134,6 +146,7 @@ public class Drive implements IDrive {
     @Override
     public void stop() {
         driveManual(0.0, 0.0);
+        desiredAngle = gyroscope.getYaw();
         angularSpeed = 0.0;
     }
 
@@ -170,15 +183,9 @@ public class Drive implements IDrive {
     }
 
     private void manualControlPeriodic() {
-        double deltaAngle = (desiredAngle - gyroscope.getYaw() + (Math.PI * 3)) % (Math.PI * 2) - Math.PI;
-        double actualSpeed = angularSpeed * (deltaAngle / Math.PI);
-
-        /*Debug.logPeriodic("Yaw: " + (gyroscope.getYaw() / Math.PI) + "pi");
-        Debug.logPeriodic("Desired Angle: " + (desiredAngle / Math.PI) + "pi");
-        Debug.logPeriodic("deltaAngle: " + (deltaAngle / Math.PI) + "pi");
-        Debug.logPeriodic("-----------------------");*/
+        angularSpeed = rotationController.calculate(gyroscope.getYaw(), desiredAngle);
         
-        driveBase.driveCartesian(strafeSpeed, forwardSpeed, gyroscope.getYaw() != desiredAngle ? actualSpeed : 0);
+        driveBase.driveCartesian(strafeSpeed, forwardSpeed, angularSpeed);
     }
 
     @Override
@@ -186,10 +193,9 @@ public class Drive implements IDrive {
         if (driveMode == DriveMode.DRIVERCONTROL) {
             manualControlPeriodic();
         } else if (driveMode == DriveMode.AUTODRIVING) {
-            double deltaAngle = (desiredAngle + (Math.PI * 3)) % (Math.PI * 2) - Math.PI;
-            double actualSpeed = angularSpeed * (-deltaAngle / Math.PI);
-            
-            driveBase.driveCartesian(strafeSpeed, forwardSpeed, gyroscope.getYaw() != desiredAngle ? actualSpeed : 0);
+            angularSpeed = rotationController.calculate(gyroscope.getYaw(), desiredAngle);
+        
+            driveBase.driveCartesian(strafeSpeed, forwardSpeed, angularSpeed);
 
             // Check if we've completed our travel
             double averageDistanceTraveled = Math.abs((leftEncoder.getDistance() + rightEncoder.getDistance()) / 2);
