@@ -4,6 +4,7 @@ import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.drive.MecanumDrive;
+import edu.wpi.first.wpilibj.controller.PIDController;
 
 public class Drive implements IDrive {
 
@@ -14,20 +15,32 @@ public class Drive implements IDrive {
     private Runnable currentCompletionRoutine;
     private IEncoder leftEncoder;
     private IEncoder rightEncoder;
+
+    // Just proportional gain works for now, add other gains if needed
+    private PIDController rotationController;
+    private double kP = 0.6;
+    private double kI = 0.0;
+    private double kD = 0.0;
     
     private WPI_TalonSRX frontLeftMotor;
     private WPI_TalonSRX frontRightMotor;
     private WPI_TalonSRX rearLeftMotor;
     private WPI_TalonSRX rearRightMotor;
 
+    // Teleoperated
     private double forwardSpeed;
     private double strafeSpeed;
     private double angularSpeed;
     private double desiredAngle;
+
+    // Autonomous
+    private double autoSpeed;
+    private double autoAngle;
     private double desiredDistance;
 
     private static final double WHEEL_DIAMETER = 8.0; // inches
     private static final double ENCODER_RESOLUTION = 2048.0;
+    private static final double ROTATION_TOLERANCE_DEGREES = 2.0;
 
     public Drive(IGyroscopeSensor gyroscope) {
         
@@ -64,6 +77,10 @@ public class Drive implements IDrive {
         rightEncoder.setDistancePerPulse(distancePerPulse);
 
         leftEncoder.setInverted(true);
+
+        rotationController = new PIDController(kP, kI, kD);
+        rotationController.enableContinuousInput(-Math.PI, Math.PI);
+        rotationController.setTolerance(Math.toRadians(ROTATION_TOLERANCE_DEGREES));
     }
 
     @Override
@@ -72,35 +89,51 @@ public class Drive implements IDrive {
     }
 
     @Override
-    public void driveDistance(double distanceInches, double forwardSpeed, double strafeSpeed) {
-        driveDistance(distanceInches, forwardSpeed, strafeSpeed, null);
+    public void rotateRelative(double angle) {
+        driveMode = DriveMode.DRIVERCONTROL;
+        
+        desiredAngle = gyroscope.getYaw() + angle; 
     }
 
     @Override
-    public void rotateDegrees(double angle, double angularSpeed) {
-        rotateDegrees(angle, angularSpeed, null);
+    public void rotateAbsolute(double angle) {
+        driveMode = DriveMode.DRIVERCONTROL;
+
+        desiredAngle = angle;
     }
 
     @Override
-    public void driveDistance(double distanceInches, double forwardSpeed, double strafeSpeed, Runnable completionRoutine) {
+    public void driveDistance(double distanceInches, double speed, double angle) {
+        driveDistance(distanceInches, speed, angle, null);
+    }
+
+    @Override
+    public void driveDistance(double distanceInches, double speed, double angle, Runnable completionRoutine) {
         driveMode = DriveMode.AUTODRIVING;
         
         setCompletionRoutine(completionRoutine);
-        this.forwardSpeed = forwardSpeed;
-        this.strafeSpeed = strafeSpeed;
         desiredDistance = distanceInches;
+        autoSpeed = speed;
+        autoAngle = Math.toRadians(angle);
 
         leftEncoder.reset();
         rightEncoder.reset();
     }
 
     @Override
-    public void rotateDegrees(double angle, double angularSpeed, Runnable completionRoutine) {
+    public void rotateRelative(double angle, Runnable completionRoutine) {
         driveMode = DriveMode.AUTODRIVING;
         
         setCompletionRoutine(completionRoutine);
-        this.desiredAngle = gyroscope.getYaw() + angle;
-        this.angularSpeed = angularSpeed; 
+        desiredAngle = gyroscope.getYaw() + Math.toRadians(angle);
+    }
+
+    @Override
+    public void rotateAbsolute(double angle, Runnable completionRoutine) {
+        driveMode = DriveMode.AUTODRIVING;
+        
+        setCompletionRoutine(completionRoutine);
+        desiredAngle = Math.toRadians(angle);
     }
 
     @Override
@@ -115,20 +148,20 @@ public class Drive implements IDrive {
         setCompletionRoutine(null);
     }
 
+    @Override
     public void stop() {
         driveManual(0.0, 0.0);
-        lookAt(0.0, 0.0);
+        desiredAngle = gyroscope.getYaw();
+        angularSpeed = 0.0;
     }
 
     @Override
-    public void lookAt(double angle) {
-        this.desiredAngle = angle;
-    }
-
-    @Override
-    public void lookAt(double angle, double angularSpeed) {
-        this.angularSpeed = angularSpeed;
-        this.desiredAngle = angle;
+    public void init() {
+        currentCompletionRoutine = null;
+        stop();
+        if(DriverStation.getInstance().isAutonomous()) {
+            
+        }
     }
 
     private void setCompletionRoutine(Runnable completionRountime) {
@@ -155,25 +188,9 @@ public class Drive implements IDrive {
     }
 
     private void manualControlPeriodic() {
-        double deltaAngle = (desiredAngle - gyroscope.getYaw() + (Math.PI * 3)) % (Math.PI * 2) - Math.PI;
-        double actualSpeed = angularSpeed * (deltaAngle / Math.PI);
-
-        Debug.logPeriodic("Yaw: " + (gyroscope.getYaw() / Math.PI) + "pi");
-        Debug.logPeriodic("Desired Angle: " + (desiredAngle / Math.PI) + "pi");
-        Debug.logPeriodic("deltaAngle: " + (deltaAngle / Math.PI) + "pi");
-        Debug.logPeriodic("-----------------------");
+        angularSpeed = rotationController.calculate(gyroscope.getYaw(), desiredAngle);
         
-        driveBase.driveCartesian(strafeSpeed, forwardSpeed, gyroscope.getYaw() != desiredAngle ? actualSpeed : 0);
-        //driveBase.driveCartesian(0, 0, 0);
-    }
-
-    @Override
-    public void init() {
-        currentCompletionRoutine = null;
-        stop();
-        if(DriverStation.getInstance().isAutonomous()) {
-            
-        }
+        driveBase.driveCartesian(strafeSpeed, forwardSpeed, angularSpeed);
     }
 
     @Override
@@ -181,10 +198,9 @@ public class Drive implements IDrive {
         if (driveMode == DriveMode.DRIVERCONTROL) {
             manualControlPeriodic();
         } else if (driveMode == DriveMode.AUTODRIVING) {
-            double deltaAngle = (desiredAngle + (Math.PI * 3)) % (Math.PI * 2) - Math.PI;
-            double actualSpeed = angularSpeed * (-deltaAngle / Math.PI);
-            
-            driveBase.driveCartesian(strafeSpeed, forwardSpeed, gyroscope.getYaw() != desiredAngle ? actualSpeed : 0);
+            angularSpeed = rotationController.calculate(gyroscope.getYaw(), desiredAngle);
+        
+            driveBase.drivePolar(autoSpeed, autoAngle, angularSpeed);
 
             // Check if we've completed our travel
             double averageDistanceTraveled = Math.abs((leftEncoder.getDistance() + rightEncoder.getDistance()) / 2);

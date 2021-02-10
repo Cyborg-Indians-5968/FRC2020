@@ -15,7 +15,7 @@ public class TeleoperatedMode implements IRobotMode {
 
     private static final double LEFT_STICK_EXPONENT = 3.0;
     private static final double RIGHT_STICK_EXPONENT = 3.0;
-    private static final double ROTATION_SPEED_THRESHOLD = 0.3;
+    private static final double ROTATION_THRESHOLD = 0.3;
 
     public TeleoperatedMode(IDrive drive, ILauncher launcher, IColorWheel wheel) {
         xboxController = new XboxController(PortMap.USB.XBOXCONTROLLER);
@@ -50,14 +50,12 @@ public class TeleoperatedMode implements IRobotMode {
         rightY = Math.pow(rightY, RIGHT_STICK_EXPONENT);
 
         double angle = Math.atan2(rightX, rightY);
-        double rotationSpeed = Math.sqrt(Math.pow(rightX, 2) + Math.pow(rightY, 2));
-
-        if (rotationSpeed > ROTATION_SPEED_THRESHOLD) {
-            drive.lookAt(angle, rotationSpeed);
-        } else {
-            drive.lookAt(angle, 0);
+        
+        if(Math.sqrt(Math.pow(rightX, 2) + Math.pow(rightY, 2)) > ROTATION_THRESHOLD) {
+            drive.rotateAbsolute(angle);
         }
 
+        // Process Peripheral control
         if (xboxController.getBumper(Hand.kRight)){
             launcher.shoot();
             /* This is here because the shooter stops once you advance the ball. In theory,
@@ -81,9 +79,9 @@ public class TeleoperatedMode implements IRobotMode {
             launcher.advance();
         }
 
-        /*
         //color wheel code 
         //never tested so may not work
+        /*
         data = DriverStation.getInstance().getGameSpecificMessage();
         if (xboxController.getBumper(Hand.kRight)) {
             if (data.length() > 0){
