@@ -1,11 +1,11 @@
 package frc.robot;
 
-public class AutoGalacticB implements IRobotMode {
+public class AutoGalacticABlue implements IRobotMode {
     
     private IDrive drive;
     private ILauncher launcher;
 
-    public AutoGalacticB(IDrive drive, ILauncher launcher) {
+    public AutoGalacticABlue(IDrive drive, ILauncher launcher) {
         this.drive = drive;
         this.launcher = launcher;
     }
@@ -18,7 +18,7 @@ public class AutoGalacticB implements IRobotMode {
 
     @Override
     public void periodic() {
-        //Nothing to do 
+        //Nothing to do
     }
     
 }
