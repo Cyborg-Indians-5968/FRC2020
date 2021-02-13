@@ -2,7 +2,7 @@ package frc.robot;
 
 public class AutoNavBounce implements IRobotMode {
 
-    private IDrive Drive;
+    private IDrive drive;
     private double angularSpeed = 0.2;
     private double forwardSpeed = 0.4;
 
@@ -13,6 +13,7 @@ public class AutoNavBounce implements IRobotMode {
     @Override
     public void init() { 
 
+    }
 
     @Override
     public void periodic() {

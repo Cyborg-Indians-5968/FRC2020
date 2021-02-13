@@ -17,7 +17,7 @@ public class AutonomousMode implements IRobotMode {
 
     private AutoMode determineAutoMode() {
         if (xboxController.getPOV() == 0) {
-            return AutoMode.AUTONAV;
+            return AutoMode.AUTONAV_BARREL;
         } else if (xboxController.getPOV() == 90) {
             /*
             if (limelight == A) {
@@ -45,13 +45,13 @@ public class AutonomousMode implements IRobotMode {
             case AUTONAV_SLALOM:
                 return new AutoNavSlalom(drive);
             case GALACTIC_A_RED:
-                return new AutoGalacticA(drive, launcher);
+                return new AutoGalacticARed(drive, launcher);
             case GALACTIC_B_RED:
-                return new AutoGalacticB(drive, launcher);
+                return new AutoGalacticBRed(drive, launcher);
             case GALACTIC_A_BLUE:
                 return new AutoGalacticABlue(drive, launcher);
             case GALACTIC_B_BLUE:
-                return new (drive, launcher);
+                return new AutoGalacticBBlue(drive, launcher);
             case AIMING:
                 return new AutoAiming(drive, launcher);
             default:
