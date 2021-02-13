@@ -4,11 +4,11 @@
 
 public class AutonomousMode implements IRobotMode {
 
-    private XboxController xboxController;
-    private IDrive drive;
-    private ILauncher launcher;
+    private final XboxController xboxController;
+    private final IDrive drive;
+    private final ILauncher launcher;
 
-    public AutonomousMode(IDrive drive, ILauncher launcher) {
+    public AutonomousMode(final IDrive drive, final ILauncher launcher) {
         xboxController = new XboxController(PortMap.USB.XBOXCONTROLLER);
 
         this.drive = drive;
@@ -17,26 +17,20 @@ public class AutonomousMode implements IRobotMode {
 
     private AutoMode determineAutoMode() {
         if (xboxController.getPOV() == 0) {
+            return AutoMode.AIMING;
+        } else if (xboxController.getPOV() == 180) {
             return AutoMode.AUTONAV_BARREL;
         } else if (xboxController.getPOV() == 90) {
-            /*
-            if (limelight == A) {
-                return AutoMode.GALACTIC_A;
-            } else {
-                return AutoMode.GALACTIC_B;
-            }
-            */
-            return null;
-            //TODO: determine if running galacitc red or blue
-        } else if (xboxController.getPOV() == 180) {
-            return AutoMode.AIMING;
+            return AutoMode.AUTONAV_BOUNCE;
+        } else if (xboxController.getPOV() == 270) {
+            return AutoMode.AUTONAV_SLALOM;
         } else {
             return null;
         }
     }
 
     private IRobotMode getAutoRobotMode() {
-        AutoMode autoMode = determineAutoMode();
+        final AutoMode autoMode = determineAutoMode();
         switch (autoMode) {
             case AUTONAV_BOUNCE:
                 return new AutoNavBounce(drive);
