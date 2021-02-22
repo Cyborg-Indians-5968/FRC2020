@@ -9,7 +9,6 @@ public class AutoNavBarrel implements IRobotMode {
         this.drive = drive;
     }
 
-    @Override
     public void init() { 
         driveStraightLong();
     }
