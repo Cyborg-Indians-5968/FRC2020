@@ -11,10 +11,6 @@ public class AutoNavSlalom implements IRobotMode {
 
     @Override
     public void init() {
-        driveStart();
-    }
-
-    private void driveStart() {
         driveStraightShort();
     }
 
