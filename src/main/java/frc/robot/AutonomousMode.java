@@ -38,14 +38,8 @@ public class AutonomousMode implements IRobotMode {
                 return new AutoNavBarrel(drive);
             case AUTONAV_SLALOM:
                 return new AutoNavSlalom(drive);
-            case GALACTIC_A_RED:
-                return new AutoGalacticARed(drive, launcher);
-            case GALACTIC_B_RED:
-                return new AutoGalacticBRed(drive, launcher);
-            case GALACTIC_A_BLUE:
-                return new AutoGalacticABlue(drive, launcher);
-            case GALACTIC_B_BLUE:
-                return new AutoGalacticBBlue(drive, launcher);
+            case GALACTIC:
+                return new AutoGalactic(drive, launcher);
             case AIMING:
                 return new AutoAiming(drive, launcher);
             default:
