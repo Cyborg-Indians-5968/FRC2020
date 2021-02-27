@@ -8,6 +8,8 @@ public class AutonomousMode implements IRobotMode {
     private final IDrive drive;
     private final ILauncher launcher;
 
+    private IRobotMode autonomousSubMode;
+
     public AutonomousMode(final IDrive drive, final ILauncher launcher) {
         xboxController = new XboxController(PortMap.USB.XBOXCONTROLLER);
 
@@ -25,7 +27,7 @@ public class AutonomousMode implements IRobotMode {
         } else if (xboxController.getPOV() == 270) {
             return AutoMode.AUTONAV_SLALOM;
         } else {
-            return null;
+            return AutoMode.AUTONAV_SLALOM;
         }
     }
 
@@ -50,8 +52,9 @@ public class AutonomousMode implements IRobotMode {
     
     @Override
     public void init() {
-        determineAutoMode();
-        Debug.log(getAutoRobotMode().getClass().getName());
+        autonomousSubMode = getAutoRobotMode();
+        Debug.log(autonomousSubMode.getClass().getName() + "is now running");
+        autonomousSubMode.init();
     }
 
     @Override

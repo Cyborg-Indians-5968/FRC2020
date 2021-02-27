@@ -15,10 +15,12 @@ public class AutoNavSlalom implements IRobotMode {
     }
 
     private void driveStraightShort() {
-        drive.driveDistance(60, speed, 45, () -> driveStraightLong());
+        Debug.log("I did step 1!!!");
+        drive.driveDistance(60, speed, -45, () -> driveStraightLong());
     }
 
     private void driveStraightLong() {
+        Debug.log("I did step 2!!!");
         drive.driveDistance(120, speed, 90, () -> driveStraightShort1());
     }
 
