@@ -53,7 +53,7 @@ public class AutonomousMode implements IRobotMode {
     @Override
     public void init() {
         autonomousSubMode = getAutoRobotMode();
-        Debug.log(autonomousSubMode.getClass().getName() + "is now running");
+        Debug.log(autonomousSubMode.getClass().getName() + " is now running");
         autonomousSubMode.init();
     }
 

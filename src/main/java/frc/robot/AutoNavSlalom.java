@@ -15,45 +15,53 @@ public class AutoNavSlalom implements IRobotMode {
     }
 
     private void driveStraightShort() {
-        Debug.log("I did step 1!!!");
-        drive.driveDistance(60, speed, -45, () -> driveStraightLong());
+        Debug.log("Slalom Step 1 Completed");
+        drive.driveDistance(30, speed, 0, () -> driveDiagonalLong());
+    }
+
+    private void driveDiagonalLong() {
+        Debug.log("Slalom Step 2 Completed");
+        drive.driveDistance(85, speed, -45, () -> driveStraightLong());
     }
 
     private void driveStraightLong() {
-        Debug.log("I did step 2!!!");
-        drive.driveDistance(120, speed, 90, () -> driveStraightShort1());
+        Debug.log("Slalom Step 3 Completed");
+        drive.driveDistance(120, speed, 0, () -> driveDiagonalLong1());
     }
 
-    private void driveStraightShort1() {
-        drive.driveDistance(60, speed, 135, () -> driveStraightShort2());
+    private void driveDiagonalLong1() {
+        Debug.log("Slalom Step 4 Completed");
+        drive.driveDistance(85, speed, 45, () -> driveDiagonalShort());
     }
 
-    private void driveStraightShort2() {
-        drive.driveDistance(30, speed, 90, () -> driveStraight3());
+    private void driveDiagonalShort() {
+        Debug.log("Slalom Step 5 Completed");
+        drive.driveDistance(42.5, speed, -45, () -> driveDiagonalShort1());
     }
 
-    private void driveStraight3() {
-        drive.driveDistance(30, speed, 0, () -> driveStraightShort4());
+    private void driveDiagonalShort1() {
+        Debug.log("Slalom Step 6 Completed");
+        drive.driveDistance(42.5, speed, -135, () -> driveDiagonalLong2());
     }
 
-    private void driveStraightShort4() {
-        drive.driveDistance(30, speed, -90, () -> driveStraightShort5());
-    }
-
-    private void driveStraightShort5() {
-        drive.driveDistance(60, speed, -135, () -> driveStraightLong1());
+    private void driveDiagonalLong2() {
+        Debug.log("Slalom Step 7 Completed");
+        drive.driveDistance(85, speed, 135, () -> driveStraightLong1());
     }
 
     private void driveStraightLong1() {
-        drive.driveDistance(120, speed, -90, () -> driveStraightShort6());
+        Debug.log("Slalom Step 8 Completed");
+        drive.driveDistance(120, speed, 180, () -> driveDiagonalLong3());
     }
 
-    private void driveStraightShort6() {
-        drive.driveDistance(60, speed, -45, () -> driveStraightShort7());
+    private void driveDiagonalLong3() {
+        Debug.log("Slalom Step 9 Completed");
+        drive.driveDistance(85, speed, -135, () -> driveStraightShort1());
     }
 
-    private void driveStraightShort7() {
-        drive.driveDistance(60, speed, -90, null);
+    private void driveStraightShort1() {
+        Debug.log("Slalom Step 10 Completed");
+        drive.driveDistance(30, speed, 180, null);
     }
     
     @Override
