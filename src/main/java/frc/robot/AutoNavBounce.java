@@ -13,8 +13,8 @@ public class AutoNavBounce implements IRobotMode {
     public void init() { // Intializes First Step
         driveStart();
     }
-
-    private void driveStart() { // Step 1
+  
+    public void driveStart() { // Step 1
         drive.driveDistance(60, speed, -45, () -> driveStraightLong());
     }
     
