@@ -1,9 +1,8 @@
 package frc.robot;
 
 public enum AutoMode {
-    GALACTIC,
+    AIMING,
     AUTONAV_BARREL,
     AUTONAV_BOUNCE,
-    AUTONAV_SLALOM,
-    AIMING
+    AUTONAV_SLALOM
 }

@@ -7,12 +7,14 @@ public class AutonomousMode implements IRobotMode {
     private final XboxController xboxController;
     private final IDrive drive;
     private final ILauncher launcher;
+    private final ILimelight limelight;
 
-    public AutonomousMode(final IDrive drive, final ILauncher launcher) {
+    public AutonomousMode(final IDrive drive, final ILauncher launcher, final ILimelight limelight) {
         xboxController = new XboxController(PortMap.USB.XBOXCONTROLLER);
 
         this.drive = drive;
         this.launcher = launcher;
+        this.limelight = limelight;
     }
 
     private AutoMode determineAutoMode() {
@@ -32,17 +34,15 @@ public class AutonomousMode implements IRobotMode {
     private IRobotMode getAutoRobotMode() {
         final AutoMode autoMode = determineAutoMode();
         switch (autoMode) {
-            case AUTONAV_BOUNCE:
-                return new AutoNavBounce(drive);
+            case AIMING:
+                return new AutoAiming(drive, launcher, limelight);
             case AUTONAV_BARREL:
                 return new AutoNavBarrel(drive);
+            case AUTONAV_BOUNCE:
+                return new AutoNavBounce(drive);
             case AUTONAV_SLALOM:
                 return new AutoNavSlalom(drive);
-            case GALACTIC:
-                return new AutoGalactic(drive, launcher);
-            case AIMING:
-                return new AutoAiming(drive, launcher);
-            default:
+            default: 
                 throw new IllegalArgumentException("invalid autonomous mode");
         }
     }
