@@ -15,6 +15,7 @@ public class Robot extends RobotBase {
     private ILauncher launcher;
     private IColorWheel wheel;
     private IGyroscopeSensor gyroscope;
+    private ILimelight limelight;
 
     public Robot() {
         gyroscope = new NavXMXP();
@@ -24,7 +25,7 @@ public class Robot extends RobotBase {
         drive = new Drive(gyroscope);
         //drive = new NullDrive();
         disabledMode = new DisabledMode();
-        autonomousMode = new AutonomousMode(drive, launcher);
+        autonomousMode = new AutonomousMode(drive, launcher, limelight);
         teleoperatedMode = new TeleoperatedMode(drive, launcher, wheel);
     }
 
