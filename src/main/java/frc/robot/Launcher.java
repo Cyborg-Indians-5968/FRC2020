@@ -29,6 +29,7 @@ public class Launcher implements ILauncher {
         REVERSE,
     }
     private StorageMode storageMode = StorageMode.IDLE;
+
     private enum ShooterMode {
         IDLE,
         SHOOT,
@@ -38,25 +39,24 @@ public class Launcher implements ILauncher {
     private double intakeSpeed = 0.0;
     private double storageSpeed = 0.0;
 
-    private static final double INTAKE_HIGH = 0.50;
+    private static final double INTAKE_HIGH = 0.5;
     private static final double STORAGE_HIGH = 0.5;
 
-    private static final double ADVANCE_ONE_BALL_ROTATIONS = 16000.0;
-    private static final double INITIAL_INTAKE_ROTATIONS = 18000.0;
+    private static final double ADVANCE_ONE_BALL_ROTATIONS = 20000.0;
+    private static final double INITIAL_INTAKE_ROTATIONS = 30000.0;
 
     // TODO: Tune these constants for each RPM we need
-    // This map stores arrays of gains for each distance we need to shoot from.
-    // Order: kP, kI, kD, kF
+    // This map stores arrays of gains and angular velocities for each distance we need to shoot from.
     private Map<Double, double[]> gainsMap = Map.of(
-        60.0,  new double[]{0.0, 0.0, 0.0, 0.0},
-        120.0, new double[]{0.0, 0.0, 0.0, 0.0},
-        168.0, new double[]{0.00125, 0.0, 0.0, 0.000215},
-        240.0, new double[]{0.0, 0.0, 0.0, 0.0}
+        //           Order: kP,      kI,  kD,  kF,       maxRPM
+        108.0, new double[]{0.001,   0.0, 0.0, 0.000185, 2000.0}, // This reaches setpoint faster but only reaches 1960 RPM
+        168.0, new double[]{0.00125, 0.0, 0.0, 0.000215, 2000.0}, // This reaches setpoint slower but actually reaches 2000 RPM
+        228.0, new double[]{0.00125, 0.0, 0.0, 0.000215, 2200.0}
     );
     private double maxOutput = 1.0;
     private double minOutput = 0.0;
     private double shooterSetPoint = 0.0;
-    private double maxRPM = 2000.0; //2800.0;
+    private double maxRPM = 0.0;
 
     public Launcher() {
         intakeMotor = new VictorSPX(PortMap.CAN.INTAKE_MOTOR_CONTROLLER);
@@ -70,7 +70,7 @@ public class Launcher implements ILauncher {
         shooterMotor.setInverted(true);
         shooterPIDController = shooterMotor.getPIDController();
         shooterPIDController.setOutputRange(minOutput, maxOutput);
-        setGains(168.0); // This is temporary so code does what it did before
+        setGains(228.0); // This is temporary until we have Limelight code
     }
 
     @Override
@@ -109,7 +109,7 @@ public class Launcher implements ILauncher {
     }
 
     public void setGains(double distance) {
-        // We may need to add some approximation (e.g. if(distance > 65 && distance < 75) { gainsMap.get(60); })
+        // We may need to add some approximation (e.g. if(distance > 49 && distance < 59) { gainsMap.get(54); })
         // if driving isn't accurate enough
         double[] gains = gainsMap.get(distance);
 
@@ -117,6 +117,8 @@ public class Launcher implements ILauncher {
         shooterPIDController.setI(gains[1]);
         shooterPIDController.setD(gains[2]);
         shooterPIDController.setFF(gains[3]);
+
+        maxRPM = gains[4];
     }
 
     @Override
