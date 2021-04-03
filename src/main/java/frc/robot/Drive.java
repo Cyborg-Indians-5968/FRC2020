@@ -110,7 +110,6 @@ public class Drive implements IDrive {
     public void driveDistance(double distanceInches, double speed, double angle, Runnable completionRoutine) {
         leftEncoder.reset();
         rightEncoder.reset();
-        Debug.log("I should've reset the encoders");
         
         driveMode = DriveMode.AUTODRIVING;
         
@@ -202,7 +201,10 @@ public class Drive implements IDrive {
 
             // Check if we've completed our travel
             double averageDistanceTraveled = Math.abs((leftEncoder.getDistance() + rightEncoder.getDistance()) / 2);
-            Debug.logPeriodic("Distance: " + averageDistanceTraveled);
+            Debug.logPeriodic("Total Distance: " + averageDistanceTraveled);
+            Debug.logPeriodic("Left encoder: " + leftEncoder.getDistance());
+            Debug.logPeriodic("Right encoder: " + rightEncoder.getDistance());
+            Debug.logPeriodic("---");
             if (averageDistanceTraveled > desiredDistance) {
                 handleActionEnd();
             } 
