@@ -70,7 +70,7 @@ public class Launcher implements ILauncher {
         shooterMotor.setInverted(true);
         shooterPIDController = shooterMotor.getPIDController();
         shooterPIDController.setOutputRange(minOutput, maxOutput);
-        setGains(228.0); // This is temporary until we have Limelight code
+        setDistance(228.0); // This is temporary until we have Limelight code
     }
 
     @Override
@@ -108,9 +108,19 @@ public class Launcher implements ILauncher {
         shooterMode = ShooterMode.SHOOT;
     }
 
-    public void setGains(double distance) {
-        // We may need to add some approximation (e.g. if(distance > 49 && distance < 59) { gainsMap.get(54); })
-        // if driving isn't accurate enough
+    @Override
+    public void setDistance(double distance) {
+        if(distance > 96.0 && distance < 120.0) {
+            distance = 108.0;
+        } else if(distance > 156.0 && distance < 180.0) {
+            distance = 168.0;
+        } else if(distance > 216.0 && distance < 240.0) {
+            distance = 228.0;
+        } else {
+            distance = 108.0;
+            Debug.log("Invalid distance!");
+        }
+        
         double[] gains = gainsMap.get(distance);
 
         shooterPIDController.setP(gains[0]);

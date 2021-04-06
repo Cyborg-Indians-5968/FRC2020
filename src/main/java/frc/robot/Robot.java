@@ -20,13 +20,14 @@ public class Robot extends RobotBase {
     public Robot() {
         gyroscope = new NavXMXP();
         launcher = new Launcher();
+        limelight = new Limelight();
         wheel = new NullColorWheel();
 
         drive = new Drive(gyroscope);
         //drive = new NullDrive();
         disabledMode = new DisabledMode();
-        autonomousMode = new AutonomousMode(drive, launcher, limelight);
-        teleoperatedMode = new TeleoperatedMode(drive, launcher, wheel);
+        autonomousMode = new AutonomousMode(drive);
+        teleoperatedMode = new TeleoperatedMode(drive, launcher, limelight, wheel);
     }
 
     @Override
@@ -62,6 +63,7 @@ public class Robot extends RobotBase {
         drive.periodic();
         
         launcher.periodic();
+        limelight.periodic();
         wheel.periodic();
         
         Debug.periodic();
