@@ -10,4 +10,6 @@ public interface ILimelight {
 
     public double getTargetArea();
 
+    public void periodic();
+
 }

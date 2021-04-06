@@ -8,7 +8,7 @@ public class Debug {
     }
     
     private static boolean isPeriodicLogTick = true;
-    private static final long logPeriod = 500; // ms
+    private static final long logPeriod = 200; // ms
     private static long lastLogTime = 0;
     
     // Call this method during the update loop in Robot.startCompetition to 

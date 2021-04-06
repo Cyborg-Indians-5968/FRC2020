@@ -1,12 +1,14 @@
 package frc.robot;
 
-import com.ctre.phoenix.ErrorCode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
 public class TalonEncoder implements IEncoder {
+    
     private boolean isInverted = false;
     private TalonSRX talon;
     private double distancePerPulse = 1.0;
+    private int zeroPoint = 0;
+
         public TalonEncoder(TalonSRX talon) {
             this.talon = talon;
         }
@@ -28,7 +30,7 @@ public class TalonEncoder implements IEncoder {
         }
 
         public double getPosition() {
-            int rawEncoderValue = talon.getSensorCollection().getQuadraturePosition();
+            int rawEncoderValue = talon.getSensorCollection().getQuadraturePosition() - zeroPoint;
             if (isInverted) {
                 rawEncoderValue = -rawEncoderValue;
             }
@@ -37,12 +39,6 @@ public class TalonEncoder implements IEncoder {
 
         @Override
         public void reset() {
-        ErrorCode error = talon.getSensorCollection().setQuadraturePosition(0, 500);
-        if (error != ErrorCode.OK) {
-            // Bleh, overly generic exception.
-            // If we were feeling fancy, we'd determine an ideal exception
-            // based on the error code.
-            throw new RuntimeException("Failed to reset Talon encoder! Error code = " + error.toString());
-        }
+            zeroPoint = talon.getSensorCollection().getQuadraturePosition();
     }
 }

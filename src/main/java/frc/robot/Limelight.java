@@ -14,10 +14,6 @@ public class Limelight implements ILimelight {
 
     public Limelight() {
         table = NetworkTableInstance.getDefault().getTable("limelight");
-        tv = table.getEntry("tv");
-        tx = table.getEntry("tx");
-        ty = table.getEntry("ty");
-        ta = table.getEntry("ta");
     }
 
     public boolean hasValidTarget() {
@@ -37,6 +33,13 @@ public class Limelight implements ILimelight {
     // returns a percentage
     public double getTargetArea() {
         return ta.getDouble(0.0);
+    }
+
+    public void periodic() {
+        tv = table.getEntry("tv");
+        tx = table.getEntry("tx");
+        ty = table.getEntry("ty");
+        ta = table.getEntry("ta");
     }
 
 }

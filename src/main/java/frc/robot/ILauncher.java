@@ -13,6 +13,8 @@ public interface ILauncher {
     public void reverse();
 
     public void shoot();
+    
+    public void setDistance(double distance);
 
     public void periodic();
 

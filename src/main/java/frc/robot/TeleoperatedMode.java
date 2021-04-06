@@ -9,19 +9,22 @@ public class TeleoperatedMode implements IRobotMode {
     private XboxController xboxController;
     private IDrive drive;
     private ILauncher launcher;
+    private ILimelight limelight;
     private IColorWheel wheel;
 
     private String data;
+    private double distanceFromTarget;
 
     private static final double LEFT_STICK_EXPONENT = 3.0;
     private static final double RIGHT_STICK_EXPONENT = 3.0;
     private static final double ROTATION_THRESHOLD = 0.3;
 
-    public TeleoperatedMode(IDrive drive, ILauncher launcher, IColorWheel wheel) {
+    public TeleoperatedMode(IDrive drive, ILauncher launcher, ILimelight limelight, IColorWheel wheel) {
         xboxController = new XboxController(PortMap.USB.XBOXCONTROLLER);
 
         this.drive = drive;
         this.launcher = launcher;
+        this.limelight = limelight;
         this.wheel = wheel;
     }
 
@@ -55,6 +58,14 @@ public class TeleoperatedMode implements IRobotMode {
             drive.rotateAbsolute(angle);
         }
 
+        // Process Limelight data
+        // distance = (targetHeight - robotHeight) / tan(angleFromGroundToLimelightCenter + limelightVerticalOffset)
+        distanceFromTarget = (98.25 - 35.5) / Math.tan(Math.toRadians(31.0 + limelight.getVerticalOffset()));
+        Debug.logPeriodic("Vertical Offset: " + limelight.getVerticalOffset());
+        Debug.logPeriodic("Horizontal Offset: " + limelight.getHorizontalOffset());
+        Debug.logPeriodic("Distance: " + distanceFromTarget);
+        Debug.logPeriodic("---");
+
         // Process Peripheral control
         if (xboxController.getBumper(Hand.kRight)){
             launcher.shoot();
@@ -70,6 +81,16 @@ public class TeleoperatedMode implements IRobotMode {
 
         if (xboxController.getBButton()) {
             launcher.advance();
+        }
+
+        if (xboxController.getXButton()) {
+            launcher.setDistance(108.0);
+            Debug.log("Distance set to yellow and blue!");
+        }
+
+        if(xboxController.getYButton()) {
+            launcher.setDistance(228.0);
+            Debug.log("Distance set to red!");
         }
 
         //color wheel code 
